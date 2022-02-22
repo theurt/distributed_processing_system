@@ -1,6 +1,7 @@
 package linda.server;
 
 import java.rmi.Naming;
+import java.rmi.RemoteException;
 import java.util.Collection;
 
 import linda.Callback;
@@ -104,6 +105,20 @@ public class LindaClient implements ILindaClient, Linda {
 
 	@Override
 	public void debug(String prefix) {
-		System.out.println(prefix);
+		try {
+			this.server.debug(prefix);
+			System.out.print(this.server.getLogServer());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void wipe() {
+		try {
+			this.server.wipe();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

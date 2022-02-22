@@ -1,14 +1,22 @@
 package linda.test;
 
+import java.rmi.RemoteException;
+
 import linda.*;
 
-public class BasicTest1 {
+public class BasicTest1Server {
 
     public static void main(String[] a) {
                 
-        final Linda linda = new linda.shm.CentralizedLinda();
-        //final Linda linda = new linda.server.LindaClient("//localhost:4000/aaa");
-            
+        final Linda linda = new linda.server.LindaClient("//localhost:4000/aaa");
+		((linda.server.LindaClient) linda).wipe();
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+        
        //Thread s'exécutant en premier
         new Thread() {
             public void run() {

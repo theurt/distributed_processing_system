@@ -6,7 +6,7 @@ import linda.Linda.eventMode;
 import linda.Linda.eventTiming;
 
 /*Test avec un callback que l'on réenregistre */
-public class BasicTestCallback {
+public class BasicTestCallbackServer {
 
     private static Linda linda;
     private static Tuple cbmotif;

@@ -3,12 +3,19 @@ package linda.test;
 import linda.*;
 
 /*Test plus poussé avec plusieurs threads exécutant la même requête*/
-public class BasicTest2 {
+public class BasicTest2Server {
 
     public static void main(String[] a) {
-        final Linda linda = new linda.shm.CentralizedLinda();
-        //final Linda linda = new linda.server.LindaClient("//localhost:4000/aaa");
-              
+
+        final Linda linda = new linda.server.LindaClient("//localhost:4000/aaa");      
+		((linda.server.LindaClient) linda).wipe();
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
         //Depot de 3 tuples identiques dans linda
         for (int i = 1; i <= 3; i++) {
             final int j = i;

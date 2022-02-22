@@ -35,6 +35,9 @@ public class CentralizedLinda implements Linda {
 	/** Number of cores */
 	int nb_cores = Runtime.getRuntime().availableProcessors();
 	
+	/** TEST */
+	private String log;
+	
 	/** Pool of threads */
 	ExecutorService pool = Executors.newFixedThreadPool(nb_cores);
 	
@@ -68,6 +71,12 @@ public class CentralizedLinda implements Linda {
     public CentralizedLinda() {
     	this.memoire = new LinkedList<Tuple>();
     }
+    
+    //TO DO
+    public String getLog() {
+    	return this.log;
+    }
+    
     
     /** Adds a tuple t to the tuplespace. */
     public void write(Tuple t) {
@@ -231,15 +240,22 @@ public class CentralizedLinda implements Linda {
     public void debug(String prefix) {
     	monit.lock();
     	System.out.println(prefix + "Memory content:");
+    	log = new String();
+    	log = log + prefix + "Memory content:\n";
     	for (Tuple t : memoire) {
     		for (Object o : t) {
     			System.out.print(o.toString() + " ");
+    			log = log + o.toString() + " ";
     		}
     		System.out.println();
+    		log = log +"\n";
     	}
     	System.out.println(prefix + "Registered callbacks:");
+    	log = log + prefix + "Registered callbacks:\n";
     	for (EventRegisterParam e : events) {
     		System.out.println(e.template + " " + e.mode);
+        	log = log + e.template + " " + e.mode + "\n";
+
     	}
     	monit.unlock();
     }
