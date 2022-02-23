@@ -25,9 +25,15 @@ public class BasicTestCallbackServer {
     }
 
     public static void main(String[] a) {
-        linda = new linda.shm.CentralizedLinda();
-        //linda = new linda.server.LindaClient("//localhost:4000/aaa");
-
+        linda = new linda.server.LindaClient("//localhost:4000/aaa");
+		((linda.server.LindaClient) linda).wipe();
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
         cbmotif = new Tuple(Integer.class, String.class);
         Callback callback = new MyCallback();
         linda.eventRegister(eventMode.TAKE, eventTiming.IMMEDIATE, cbmotif, callback);

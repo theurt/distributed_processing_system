@@ -28,9 +28,16 @@ public class OtherBasicTestCallbackServer {
     public static void testImmediate() {
     	System.out.println("\n----------------TESTS IMMEDIATE----------------\n");
 		
-		linda = new linda.shm.CentralizedLinda();
-        // linda = new linda.server.LindaClient("//localhost:4000/MonServeur");
-
+        linda = new linda.server.LindaClient("//localhost:4000/aaa");
+		((linda.server.LindaClient) linda).wipe();
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		
         Tuple t3 = new Tuple(4, "foo");
         System.out.println("(2) write: " + t3);
         linda.write(t3);

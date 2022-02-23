@@ -4,11 +4,18 @@ import java.util.Collection;
 
 import linda.*;
 
-public class TestsAvances {
+public class TestsAvancesServer {
 	
 	public static void main(String[] a) {
-        final Linda linda = new linda.shm.CentralizedLinda();
-                
+        final Linda linda = new linda.server.LindaClient("//localhost:4000/aaa");
+        ((linda.server.LindaClient) linda).wipe();
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
         new Thread() {  
             public void run() {
                 try {

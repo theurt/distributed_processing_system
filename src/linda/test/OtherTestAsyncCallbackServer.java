@@ -22,8 +22,15 @@ public class OtherTestAsyncCallbackServer {
 
     private static void testTake() {
     	System.out.println("\n----------------TESTS TAKE----------------\n");
-        Linda linda = new linda.server.LindaClient("//localhost:4000/MonServeur");
-
+        Linda linda = new linda.server.LindaClient("//localhost:4000/aaa");
+		((linda.server.LindaClient) linda).wipe();
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
         Tuple motif = new Tuple(Integer.class, String.class);
         linda.eventRegister(eventMode.TAKE, eventTiming.IMMEDIATE, motif, new AsynchronousCallback(new MyCallback()));
 
