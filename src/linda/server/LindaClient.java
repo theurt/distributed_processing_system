@@ -107,7 +107,7 @@ public class LindaClient implements ILindaClient, Linda {
 	public void debug(String prefix) {
 		try {
 			this.server.debug(prefix);
-			System.out.print(this.server.getLogServer());
+			//System.out.print(this.server.getLogServer());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -18,7 +18,7 @@ public interface LindaServer extends Remote {
 	public Collection<Tuple> readAll(Tuple template) throws RemoteException;
 	public void eventRegister(eventMode mode, eventTiming timing, Tuple template, IRemoteCallback callback) throws RemoteException;
     public void debug(String prefix)throws RemoteException;
-	public String getLogServer()throws RemoteException;
+	//public String getLogServer()throws RemoteException;
 	public void wipe()throws RemoteException;
 
 }

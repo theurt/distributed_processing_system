@@ -29,15 +29,15 @@ public class BasicTestAsyncCallback {
         linda.write(t1);
 
         Tuple t2 = new Tuple("hello", 15);
-        System.out.println("(2) write: " + t2);
+        System.out.println("(3) write: " + t2);
         linda.write(t2);
-        linda.debug("(2)");
+        linda.debug("(3)");
 
         Tuple t3 = new Tuple(4, "foo");
-        System.out.println("(2) write: " + t3);
+        System.out.println("(4) write: " + t3);
         linda.write(t3);
 
-        linda.debug("(2)");
+        linda.debug("(4)");
 
     }
 

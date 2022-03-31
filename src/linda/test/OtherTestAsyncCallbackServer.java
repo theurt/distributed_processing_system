@@ -10,6 +10,8 @@ import linda.Linda.eventTiming;
  */
 public class OtherTestAsyncCallbackServer {
 
+    private static Linda linda = new linda.server.LindaClient("//localhost:4000/aaa");
+
     private static class MyCallback implements Callback {
         public void call(Tuple t) {
             try {
@@ -22,7 +24,6 @@ public class OtherTestAsyncCallbackServer {
 
     private static void testTake() {
     	System.out.println("\n----------------TESTS TAKE----------------\n");
-        Linda linda = new linda.server.LindaClient("//localhost:4000/aaa");
 		((linda.server.LindaClient) linda).wipe();
 		try {
 			Thread.sleep(100);
@@ -40,48 +41,48 @@ public class OtherTestAsyncCallbackServer {
         linda.write(t1);        
         
         Tuple t2 = new Tuple("hello", 15);
-        System.out.println("(2) write: " + t2);
+        System.out.println("(3) write: " + t2);
         linda.write(t2);
-        linda.debug("(2)");
+        linda.debug("(3)");
         
         Tuple t3 = new Tuple(4, "foo");
-        System.out.println("(2) write: " + t3);
+        System.out.println("(4) write: " + t3);
         linda.write(t3);
 
         Tuple t4 = linda.tryRead(motif);
-        System.out.println("(2) TryRead: " + t4);	//renvoit null car eventRegister l'a retiré
+        System.out.println("(5) TryRead: " + t4);	//renvoit null car eventRegister l'a retiré
         
-        linda.debug("(2)");
+        linda.debug("(5)");
 
         Tuple t5 = linda.read(t1);
-        System.out.println("(2) read: " + t5);
+        System.out.println("(6) read: " + t5);
     }
     
     private static void testRead() {
     	System.out.println("\n----------------TESTS READ----------------\n");
-    	Linda linda = new linda.shm.CentralizedLinda();
+    	((linda.server.LindaClient) linda).wipe();
         // Linda linda = new linda.server.LindaClient("//localhost:4000/MonServeur");
 
         Tuple motif = new Tuple(Integer.class, String.class);
         linda.eventRegister(eventMode.READ, eventTiming.IMMEDIATE, motif, new AsynchronousCallback(new MyCallback()));
       
         Tuple t1 = new Tuple(4, 5);
-        System.out.println("(2) write: " + t1);
+        System.out.println("(7) write: " + t1);
         linda.write(t1);        
         
         Tuple t2 = new Tuple("hello", 15);
-        System.out.println("(2) write: " + t2);
+        System.out.println("(8) write: " + t2);
         linda.write(t2);
-        linda.debug("(2)");
+        linda.debug("(8)");
         
         Tuple t3 = new Tuple(4, "foo");
-        System.out.println("(2) write: " + t3);
+        System.out.println("(9) write: " + t3);
         linda.write(t3);
 
         Tuple t4 = linda.tryRead(motif);
-        System.out.println("(2) TryRead: " + t4);		//ne renvoit pas null: eventRegister ne l'a pas retiré
+        System.out.println("(10) TryRead: " + t4);		//ne renvoit pas null: eventRegister ne l'a pas retiré
         
-        linda.debug("(2)");
+        linda.debug("(10)");
 
         Tuple t5 = linda.read(t1);
         System.out.println("(2) read: " + t5);
