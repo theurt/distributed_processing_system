@@ -40,7 +40,7 @@ public interface Linda {
      */
     public Collection<Tuple> readAll(Tuple template);
 
-    public enum eventMode { READ, TAKE };
+    public enum eventMode { READ, TAKE, CACHE };
     public enum eventTiming { IMMEDIATE, FUTURE };
 
     /** Registers a callback which will be called when a tuple matching the template appears.

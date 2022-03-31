@@ -4,6 +4,7 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import linda.Callback;
@@ -67,6 +68,10 @@ public class LindaServerImpl extends UnicastRemoteObject implements LindaServer 
 		
 		this.linda.debug(prefix);
 		this.log = this.linda.getLog();
+	}
+	
+	public ArrayList<Tuple> getCache() {
+		return this.linda.getCache();
 	}
 	
 	public static void main(String[] args) {

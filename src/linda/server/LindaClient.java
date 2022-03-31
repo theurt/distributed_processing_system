@@ -2,6 +2,7 @@ package linda.server;
 
 import java.rmi.Naming;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import linda.Callback;
@@ -12,7 +13,10 @@ import linda.Tuple;
  * It implements the Linda interface and propagates everything to the server it is connected to.
  * */
 public class LindaClient implements ILindaClient, Linda {
-	LindaServer server;
+	private LindaServer server;
+	private boolean validCache = false;
+	private ArrayList<Tuple> cache = new ArrayList<Tuple>();
+	
 	
     /** Initializes the Linda implementation.
      *  @param serverURI the URI of the server, e.g. "rmi://localhost:4000/LindaServer" or "//localhost:4000/LindaServer".
@@ -46,12 +50,25 @@ public class LindaClient implements ILindaClient, Linda {
 
 	@Override
 	public Tuple read(Tuple template) {
-		try {
-			return this.server.read(template);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
+		Tuple t = null;
+		if (this.validCache) {
+			System.out.println("cache valide");
+			for (Tuple tuple : this.cache) {
+				if (tuple.matches(template))
+					t = tuple;
+			}
+		} else {
+			System.out.println("cache invalide");
+			this.refreshCache();
 		}
+		if (t == null) {
+			try {
+				t = this.server.read(template);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return t;
 	}
 
 	@Override
@@ -66,12 +83,25 @@ public class LindaClient implements ILindaClient, Linda {
 
 	@Override
 	public Tuple tryRead(Tuple template) {
-		try {
-			return this.server.tryRead(template);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
+		Tuple t = null;
+		if (this.validCache) {
+			System.out.println("cache valide");
+			for (Tuple tuple : this.cache) {
+				if (tuple.matches(template))
+					t = tuple;
+			}
+		} else {
+			System.out.println("cache invalide");
+			this.refreshCache();
 		}
+		if (t == null) {
+			try {
+				t = this.server.tryRead(template);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return t;
 	}
 
 	@Override
@@ -117,8 +147,25 @@ public class LindaClient implements ILindaClient, Linda {
 		try {
 			this.server.wipe();
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void refreshCache() {
+		try {
+			this.cache = this.server.getCache();
+			this.validCache = true;
+			this.server.eventRegister(eventMode.CACHE, eventTiming.IMMEDIATE, new Tuple(), new RemoteCallback(new InvalidateCacheCallback()));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private class InvalidateCacheCallback implements Callback {
+		@Override
+		public void call(Tuple t) {
+			validCache = false;
 		}
 	}
 }

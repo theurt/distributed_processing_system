@@ -2,6 +2,7 @@ package linda.server;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import linda.*;
@@ -20,5 +21,5 @@ public interface LindaServer extends Remote {
     public void debug(String prefix)throws RemoteException;
 	public String getLogServer()throws RemoteException;
 	public void wipe()throws RemoteException;
-
+	public ArrayList<Tuple> getCache() throws RemoteException;
 }

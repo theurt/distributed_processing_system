@@ -54,6 +54,12 @@ public class CentralizedLinda implements Linda {
 	/** Permet de g�rer les lectures sur des tuples qui ne sont pas encore pr�sents en m�moire */
 	private HashMap<UUID, Couple> ecriture = new HashMap<>();
 	
+	/** Callbacks d'invalidation de cache */
+	private ArrayList<Callback> cacheCallbacks = new ArrayList<Callback>();
+	
+	/** Taille du cache récupéré par les clients */
+	private int cacheSize = 100;
+	
 	//classe statique contenant les paramètres d'un eventRegister
 	private static class EventRegisterParam {
 		private linda.Linda.eventMode mode;
@@ -135,8 +141,9 @@ public class CentralizedLinda implements Linda {
 		
 		//Leave critical section
 		finally {
-		monit.unlock();
+			monit.unlock();
 		}
+    	this.invalidateCaches();
 		return t;
     }
 
@@ -183,6 +190,9 @@ public class CentralizedLinda implements Linda {
 		finally {
 			monit.unlock();
 		}
+		if (t != null) {
+			this.invalidateCaches();
+		}
 		return t;
     };
 
@@ -215,6 +225,9 @@ public class CentralizedLinda implements Linda {
 		finally {
 			monit.unlock();
 		}
+		if (!res.isEmpty()) {
+			this.invalidateCaches();
+		}
 		return res;
     };
 
@@ -238,7 +251,7 @@ public class CentralizedLinda implements Linda {
     		monit.unlock();
     	}
 		return res;
-    };
+    }
 
     /** Registers a callback which will be called when a tuple matching the template appears.
      * If the mode is Take, the found tuple is removed from the tuplespace.
@@ -255,34 +268,39 @@ public class CentralizedLinda implements Linda {
      */
     
 	public void eventRegister(linda.Linda.eventMode mode, linda.Linda.eventTiming timing, Tuple template, Callback callback) {
-		if(timing == eventTiming.IMMEDIATE) {
-			//System.out.println("DEBUT LOCK");
-			if (monit.isLocked()) {
-				System.out.printf("Aie lock hold by antoher thread ! ");
-			}
-			Tuple t = null;
-			monit.lock();
-			//System.out.printf("Thread %s hold the lock\n",Thread.currentThread().getName());
-			try {
-				t= getFromMemory(template);
-			}
-			finally {
-				monit.unlock();		
-				//System.out.printf("Thread %s free the lock\n",Thread.currentThread().getName());
-
-			}
-			if(t != null) {
-				call(callback,mode,t.deepclone());
-				//Interblocage ici, si le callback cherche à être recharger il a besoin du lock qui appartient au thread courant
+		if (mode == eventMode.CACHE) {
+			this.cacheCallbacks.add(callback);
+		} else {
+			
+			if(timing == eventTiming.IMMEDIATE) {
+				//System.out.println("DEBUT LOCK");
+				if (monit.isLocked()) {
+					System.out.printf("Aie lock hold by another thread ! ");
+				}
+				Tuple t = null;
+				monit.lock();
+				//System.out.printf("Thread %s hold the lock\n",Thread.currentThread().getName());
+				try {
+					t= getFromMemory(template);
+				}
+				finally {
+					monit.unlock();		
+					//System.out.printf("Thread %s free the lock\n",Thread.currentThread().getName());
+	
+				}
+				if(t != null) {
+					call(callback,mode,t.deepclone());
+					//Interblocage ici, si le callback cherche à être recharger il a besoin du lock qui appartient au thread courant
+				} else {
+					events.add(new EventRegisterParam(mode, template, callback));
+				}
+				
 			} else {
 				events.add(new EventRegisterParam(mode, template, callback));
 			}
-			
-		} else {
-			events.add(new EventRegisterParam(mode, template, callback));
 		}
 
-	};
+	}
 
     /** To debug, prints any information it wants (e.g. the tuples in tuplespace or the registered callbacks), prefixed by <code>prefix</code. */
     public void debug(String prefix) {
@@ -322,6 +340,27 @@ public class CentralizedLinda implements Linda {
     public void reset() {
     	memoire = new LinkedList<Tuple>();
     	events = new ArrayList<EventRegisterParam>();
+    }
+    
+    public ArrayList<Tuple> getCache() {
+    	ArrayList<Tuple> cache = new ArrayList<Tuple>();
+    	monit.lock();
+    	for (int i = 0; i < Math.min(this.cacheSize, this.memoire.size()); i++) {
+    		cache.add(this.memoire.get(i));
+    	}
+    	monit.unlock();
+    	return cache;
+    }
+    
+    private void invalidateCaches() {
+    	Iterator<Callback> it = ((Collection<Callback>) this.cacheCallbacks.clone()).iterator();
+    	Callback e;
+    	Tuple t = new Tuple();
+		while(it.hasNext()) {
+			e = it.next();
+			e.call(t);
+			this.cacheCallbacks.remove(e);
+		}
     }
     
     /**Fire a callback on a specific tuple */
