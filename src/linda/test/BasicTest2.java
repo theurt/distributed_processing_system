@@ -9,8 +9,8 @@ public class BasicTest2 {
         final Linda linda = new linda.shm.CentralizedLinda();
         //final Linda linda = new linda.server.LindaClient("//localhost:4000/aaa");
               
-        //Depot de 3 tuples identiques dans linda
-        for (int i = 1; i <= 3; i++) {
+        //Lecture de 3 tuples identiques dans linda
+        for (int i = 5; i <= 7; i++) {
             final int j = i;
             new Thread() {  
                 public void run() {
@@ -40,16 +40,16 @@ public class BasicTest2 {
                 linda.write(t1);
 
                 Tuple t2 = new Tuple("hello", 15);
-                System.out.println("(0) write: " + t2);
+                System.out.println("(1) write: " + t2);
                 linda.write(t2);
 
-                linda.debug("(0)");
+                linda.debug("(1)");
 
                 Tuple t3 = new Tuple(4, "foo");
-                System.out.println("(0) write: " + t3);
+                System.out.println("(2) write: " + t3);
                 linda.write(t3);
                                 
-                linda.debug("(0)");
+                linda.debug("(2)");
 
             }
         }.start();
