@@ -45,18 +45,18 @@ public class BasicTest1Server {
                 linda.write(t1);
 
                 Tuple t11 = new Tuple(4, 5);
-                System.out.println("(2) write: " + t11);
+                System.out.println("(3) write: " + t11);
                 linda.write(t11);
 
                 Tuple t2 = new Tuple("hello", 15);
-                System.out.println("(2) write: " + t2);
+                System.out.println("(3) write: " + t2);
                 linda.write(t2);
 
                 Tuple t3 = new Tuple(4, "foo");
-                System.out.println("(2) write: " + t3);
+                System.out.println("(4) write: " + t3);
                 linda.write(t3);
                                 
-                linda.debug("(2)");
+                linda.debug("(4)");
 
             }
         }.start();
