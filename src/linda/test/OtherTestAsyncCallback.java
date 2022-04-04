@@ -8,9 +8,7 @@ import linda.Linda.eventTiming;
  * @author groupe G5
  *
  */
-public class OtherTestAsyncCallbackServer {
-
-    private static Linda linda = new linda.server.LindaClient("//localhost:4000/aaa");
+public class OtherTestAsyncCallback {
 
     private static class MyCallback implements Callback {
         public void call(Tuple t) {
@@ -24,14 +22,9 @@ public class OtherTestAsyncCallbackServer {
 
     private static void testTake() {
     	System.out.println("\n----------------TESTS TAKE----------------\n");
-		((linda.server.LindaClient) linda).wipe();
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
+    	Linda linda = new linda.shm.CentralizedLinda();
+        // Linda linda = new linda.server.LindaClient("//localhost:4000/MonServeur");
+
         Tuple motif = new Tuple(Integer.class, String.class);
         linda.eventRegister(eventMode.TAKE, eventTiming.IMMEDIATE, motif, new AsynchronousCallback(new MyCallback()));
 
@@ -60,7 +53,7 @@ public class OtherTestAsyncCallbackServer {
     
     private static void testRead() {
     	System.out.println("\n----------------TESTS READ----------------\n");
-    	((linda.server.LindaClient) linda).wipe();
+    	Linda linda = new linda.shm.CentralizedLinda();
         // Linda linda = new linda.server.LindaClient("//localhost:4000/MonServeur");
 
         Tuple motif = new Tuple(Integer.class, String.class);
@@ -85,12 +78,13 @@ public class OtherTestAsyncCallbackServer {
         linda.debug("(10)");
 
         Tuple t5 = linda.read(t1);
-        System.out.println("(2) read: " + t5);
+        System.out.println("(11) read: " + t5);
     }
     public static void main(String[] a) {
     	testTake();
     	testRead();
         
+    	//NB : les Got 4 foo apparaissent à la fin à cause des callback asynchrone
 
     }
 
