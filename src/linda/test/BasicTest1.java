@@ -19,8 +19,8 @@ public class BasicTest1 {
                 }
                 Tuple motif = new Tuple(Integer.class, String.class);
                 Tuple res = linda.take(motif);	//La requête doit attendre
-                System.out.println("(1) Resultat:" + res);
-                linda.debug("(1)");
+                System.out.println("(4) Resultat:" + res);
+                linda.debug("(4)");
             }
         }.start();
                 
@@ -33,7 +33,7 @@ public class BasicTest1 {
                 }
 
                 Tuple t1 = new Tuple(4, 5);
-                System.out.println("(2) write: " + t1);
+                System.out.println("(1) write: " + t1);
                 linda.write(t1);
 
                 Tuple t11 = new Tuple(4, 5);
@@ -41,14 +41,14 @@ public class BasicTest1 {
                 linda.write(t11);
 
                 Tuple t2 = new Tuple("hello", 15);
-                System.out.println("(2) write: " + t2);
+                System.out.println("(3) write: " + t2);
                 linda.write(t2);
 
                 Tuple t3 = new Tuple(4, "foo");
-                System.out.println("(2) write: " + t3);
+                System.out.println("(4) write: " + t3);
                 linda.write(t3);
                                 
-                linda.debug("(2)");
+                linda.debug("(4)");
 
             }
         }.start();
