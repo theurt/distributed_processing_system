@@ -28,31 +28,31 @@ public class TestsAvancesServer {
                 System.out.println("(1) Resultat readAll1 : " + res);
                 
                 Tuple res2 = linda.tryRead(motif);
-                System.out.println("(1) Resultat tryRead1 : " + res2);
+                System.out.println("(2) Resultat tryRead1 : " + res2);
                 
                 Tuple res3 = linda.tryTake(motif);
-                System.out.println("(1) Resultat tryTake1 : " + res3);
+                System.out.println("(3) Resultat tryTake1 : " + res3);
                 
                 Collection<Tuple> res4 = linda.takeAll(motif);
-                System.out.println("(1) Resultat takeAll : " + res4);
+                System.out.println("(4) Resultat takeAll : " + res4);
                 
                 Collection<Tuple> res5 = linda.takeAll(motif);
-                System.out.println("(1) Resultat takeAll2 : " + res5);
+                System.out.println("(5) Resultat takeAll2 : " + res5);
                 
                 Collection<Tuple> res6 = linda.readAll(motif);
-                System.out.println("(1) Resultat readAll2 : " + res6);
+                System.out.println("(6) Resultat readAll2 : " + res6);
                 
                 Tuple res7 = linda.tryRead(motif);
-                System.out.println("(1) Resultat tryRead2 : " + res7);
+                System.out.println("(7) Resultat tryRead2 : " + res7);
                 
                 Tuple res8 = linda.tryTake(motif);
-                System.out.println("(1) Resultat tryTake2 : " + res8);
+                System.out.println("(8) Resultat tryTake2 : " + res8);
                 
                 Tuple motif2 = new Tuple(Integer.class, Integer.class);
                 Tuple res9 = linda.read(motif2);
-                System.out.println("(1) Resultat read : " + res9);
+                System.out.println("(9) Resultat read : " + res9);
                 
-                linda.debug("(1)");
+                linda.debug("(9)");
             }
         }.start();
                 
@@ -65,28 +65,28 @@ public class TestsAvancesServer {
                 }
 
                 Tuple t1 = new Tuple(4, 5);
-                System.out.println("(0) write: " + t1);
+                System.out.println("(10) write: " + t1);
                 linda.write(t1);
 
                 Tuple t2 = new Tuple("hello", 15);
-                System.out.println("(0) write: " + t2);
+                System.out.println("(11) write: " + t2);
                 linda.write(t2);
 
-                linda.debug("(0)");
+                linda.debug("(11)");
 
                 Tuple t3 = new Tuple(4, "foo");
-                System.out.println("(0) write: " + t3);
+                System.out.println("(12) write: " + t3);
                 linda.write(t3);
                 
                 Tuple t4 = new Tuple(31102000, "Akina");
-                System.out.println("(0) write: " + t4);
+                System.out.println("(13) write: " + t4);
                 linda.write(t4);
                 
                 Tuple t5 = new Tuple(666, "WillM");
-                System.out.println("(0) write: " + t5);
+                System.out.println("(14) write: " + t5);
                 linda.write(t5);
                                 
-                linda.debug("(0)");
+                linda.debug("(14)");
 
             }
         }.start();
