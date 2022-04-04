@@ -15,6 +15,7 @@ public class BasicTestCallbackServer {
 
 		public void call(Tuple t) {
             System.out.println("CB got "+t);
+    		//System.out.printf("EVENT REGISTER : Thread %s  with Id %d \n",Thread.currentThread().getName(), Thread.currentThread().getId());
             linda.eventRegister(eventMode.TAKE, eventTiming.IMMEDIATE, cbmotif, this);
             try {
                 Thread.sleep(1000);
@@ -65,3 +66,4 @@ public class BasicTestCallbackServer {
     }
 
 }
+
