@@ -33,7 +33,7 @@ public class BasicTestCallback {
         linda.eventRegister(eventMode.TAKE, eventTiming.IMMEDIATE, cbmotif, callback);
 
         Tuple t1 = new Tuple(4, 5);
-        System.out.println("(2) write: " + t1);
+        System.out.println("(1) write: " + t1);
         linda.write(t1);
 
         Tuple t2 = new Tuple("hello", 15);
@@ -42,11 +42,11 @@ public class BasicTestCallback {
         linda.debug("(2)");
 
         Tuple t3 = new Tuple(4, "foo");
-        System.out.println("(2) write: " + t3);
+        System.out.println("(3) write: " + t3);
         linda.write(t3);
         
         Tuple t4 = new Tuple(10, "foo");
-        System.out.println("(2) write: " + t4);
+        System.out.println("(4) write: " + t4);
         linda.write(t4);
         
         try {
@@ -54,7 +54,7 @@ public class BasicTestCallback {
         } catch (InterruptedException e) {
         }
 
-        linda.debug("(2)");
+        linda.debug("(4)");
 
     }
 
