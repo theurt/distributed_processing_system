@@ -36,7 +36,7 @@ public class CentralizedLinda implements Linda {
 	int nb_cores = Runtime.getRuntime().availableProcessors();
 	
 	/** TEST */
-	//private String log;
+	private String log;
 	
 	/** Pool of threads */
 	ExecutorService pool = Executors.newFixedThreadPool(nb_cores);
@@ -78,9 +78,9 @@ public class CentralizedLinda implements Linda {
     	this.memoire = new LinkedList<Tuple>();
     }
    
-   //public String getLog() {
-   // 	return this.log;
-   // }
+   public String getLog() {
+    	return this.log;
+   }
     
     
     /** Adds a tuple t to the tuplespace. */
@@ -379,13 +379,14 @@ public class CentralizedLinda implements Linda {
     }
     
     private void invalidateCaches() {
-    	Iterator<Callback> it = ((Collection<Callback>) this.cacheCallbacks.clone()).iterator();
-    	Callback e;
     	Tuple t = new Tuple();
-		while(it.hasNext()) {
-			e = it.next();
-			e.call(t);
-			this.cacheCallbacks.remove(e);
+		for (Callback e : this.cacheCallbacks) {
+			try {
+				e.call(t);
+			} catch (Exception ex) {
+				//e.printStackTrace();
+				System.out.println("A client cache may not have been reached and updated");
+			}
 		}
     }
     
@@ -430,7 +431,7 @@ public class CentralizedLinda implements Linda {
 								template)));
 		}
 		
-		//Keep only the tuple wich are really in memory
+		//Keep only the tuple which are really in memory
 		Tuple found_tuple = null;
 		for (Future<Tuple> f : res) {
 			try {

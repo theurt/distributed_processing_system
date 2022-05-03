@@ -1,4 +1,3 @@
-
 package linda.test;
 
 import linda.*;
@@ -66,4 +65,3 @@ public class BasicTestCallbackServer {
     }
 
 }
-

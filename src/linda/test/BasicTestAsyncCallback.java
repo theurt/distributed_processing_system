@@ -1,4 +1,3 @@
-
 package linda.test;
 
 import linda.*;
@@ -40,5 +39,4 @@ public class BasicTestAsyncCallback {
         linda.debug("(4)");
 
     }
-
 }

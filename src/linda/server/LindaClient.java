@@ -16,6 +16,7 @@ public class LindaClient implements ILindaClient, Linda {
 	private LindaServer server;
 	private boolean validCache = false;
 	private ArrayList<Tuple> cache = new ArrayList<Tuple>();
+	private boolean caching = true;
 	
 	
     /** Initializes the Linda implementation.
@@ -24,9 +25,21 @@ public class LindaClient implements ILindaClient, Linda {
     public LindaClient(String serverURI) {
         try {
 			this.server = (LindaServer) Naming.lookup(serverURI);
+			this.server.eventRegister(eventMode.CACHE, eventTiming.IMMEDIATE, new Tuple(), new RemoteCallback(new InvalidateCacheCallback()));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+    }
+    
+    public LindaClient(String serverURI, boolean caching) {
+        try {
+			this.server = (LindaServer) Naming.lookup(serverURI);
+			if (caching)
+				this.server.eventRegister(eventMode.CACHE, eventTiming.IMMEDIATE, new Tuple(), new RemoteCallback(new InvalidateCacheCallback()));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+        this.caching = caching;
     }
 
 	@Override
@@ -52,13 +65,13 @@ public class LindaClient implements ILindaClient, Linda {
 	public Tuple read(Tuple template) {
 		Tuple t = null;
 		if (this.validCache) {
-			System.out.println("cache valide");
+			//System.out.println("cache valide");
 			for (Tuple tuple : this.cache) {
 				if (tuple.matches(template))
 					t = tuple;
 			}
-		} else {
-			System.out.println("cache invalide");
+		} else if (this.caching) {
+			//System.out.println("cache invalide");
 			this.refreshCache();
 		}
 		if (t == null) {
@@ -85,13 +98,13 @@ public class LindaClient implements ILindaClient, Linda {
 	public Tuple tryRead(Tuple template) {
 		Tuple t = null;
 		if (this.validCache) {
-			System.out.println("cache valide");
+			//System.out.println("cache valide");
 			for (Tuple tuple : this.cache) {
 				if (tuple.matches(template))
 					t = tuple;
 			}
-		} else {
-			System.out.println("cache invalide");
+		} else if (this.caching) {
+			//System.out.println("cache invalide");
 			this.refreshCache();
 		}
 		if (t == null) {
@@ -137,7 +150,7 @@ public class LindaClient implements ILindaClient, Linda {
 	public void debug(String prefix) {
 		try {
 			this.server.debug(prefix);
-			//System.out.print(this.server.getLogServer());
+			System.out.print(this.server.getLogServer());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -156,7 +169,6 @@ public class LindaClient implements ILindaClient, Linda {
 		try {
 			this.cache = this.server.getCache();
 			this.validCache = true;
-			this.server.eventRegister(eventMode.CACHE, eventTiming.IMMEDIATE, new Tuple(), new RemoteCallback(new InvalidateCacheCallback()));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

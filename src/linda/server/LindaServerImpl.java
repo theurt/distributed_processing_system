@@ -19,13 +19,13 @@ import java.util.regex.Pattern;
 public class LindaServerImpl extends UnicastRemoteObject implements LindaServer {
 	private static final long serialVersionUID = 1L;
 	private CentralizedLinda linda = new CentralizedLinda();
-	//private String log;
+	private String log;
 	
 	public LindaServerImpl() throws RemoteException {}
 	
-	//public String getLogServer() {
-	//	return this.log;
-	//}
+	public String getLogServer() {
+		return this.log;
+	}
 	
 	public void wipe() {
 		this.linda.reset();
@@ -67,7 +67,7 @@ public class LindaServerImpl extends UnicastRemoteObject implements LindaServer 
 	public void debug(String prefix) {
 		
 		this.linda.debug(prefix);
-		//this.log = this.linda.getLog();
+		this.log = this.linda.getLog();
 	}
 	
 	public ArrayList<Tuple> getCache() {
@@ -79,7 +79,7 @@ public class LindaServerImpl extends UnicastRemoteObject implements LindaServer 
 			String address = args[0];
 			Pattern r = Pattern.compile(".*localhost:([0-9]+).*");
 			Matcher m = r.matcher(address);
-			if (m.matches()) {;
+			if (m.matches()) {
 				int port = Integer.parseInt(m.group(1));
 				LocateRegistry.createRegistry(port);
 				Naming.bind(address, new LindaServerImpl());
