@@ -21,6 +21,6 @@ public interface ILindaClient {
 	public Collection<Tuple> readAll(Tuple template);
 	public void eventRegister(eventMode mode, eventTiming timing, Tuple template, Callback callback);
 	public void debug(String prefix);
-	public void wipe()throws RemoteException;
+	public void wipe() throws RemoteException;
 	public void refreshCache();
 }
