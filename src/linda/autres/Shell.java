@@ -16,6 +16,10 @@ public class Shell {
 
 	public static void main(String[] args) {
 	   
+		boolean local = true;							//Serveur local ou distant
+		Scanner scanner = new Scanner(System.in);		//Scanner pour la lecture de string rentrées par l'utilisateur
+		String choix;
+		
 		//Identifier si le serveur est local ou non 
 		String address = args[0];
 		Pattern patternLocal = Pattern.compile(".*localhost:([0-9]+).*");
@@ -23,53 +27,57 @@ public class Shell {
 		Pattern r = Pattern.compile("([0-9]{1,3}).([0-9]{1,3}).([0-9]{1,3}).([0-9]{1,3}):([0-9]+)");
 		Matcher m = r.matcher(address);
 		if (matcheLocal.matches()) {
-			//local
+			local = true;
 		} else if (m.matches()){
-			//distant
+			local = false;
 		} else {
 			System.out.println("No valid address given");
+			return;
 		}
 		
 		//Le serveur est il joignable ?
 		try {
-			Naming.lookup("rmi://" + address + "/ServerLinda");
+			address = "rmi://" + address + "/ServerLinda";
+			Naming.lookup(address);
 		}catch(NotBoundException e) {
-				System.out.println("Adresse du serveur inconnue " + address);
+				if (local)
+					System.out.println("Il semble que vous n'ayez pas lancer le serveur sur " + address + "essayez d'utiliser le script serverDeployment et réessayez");
+				else {
+					System.out.println("Il semble que le serveur "+ address + " soit inaccessible, contactez l'administrateur et demndez lui d'exécuter le script serverDeployment");
+				}
 				return ;
 		}catch(RemoteException e ) {
-				System.out.println("Adresse du serveur inconnue" + address);
-				return ;
+			if (local)
+				System.out.println("Il semble que vous n'ayez pas lancer le serveur sur " + address + "essayez d'utiliser le script serverDeployment et réessayez");
+			else {
+				System.out.println("Il semble que le serveur "+ address + " soit inaccessible, contactez l'administrateur et demndez lui d'exécuter le script serverDeployment");
+			}				return ;
 		}catch(Exception e) {
 				e.printStackTrace();
 				return;
 		}
-		
-		//Boucle de l'interpréteur 
-		Scanner scanner = new Scanner(System.in);
-		String choix;
+
+		//Boucle principale du menu initial
 		boolean fin = false;
 		while(!fin) {
 			System.out.println("Choisissez un mode d'utilisation de l'outil [dev|test|deploy|quit] :");
 			choix = scanner.nextLine();
+			
+			//Pour tester interactivement Linda
 			if(choix.contentEquals("dev")) {
-				new AbstractShell("dev").launch();
+				new AbstractShell("dev",address).launch();
+			
+			//Pour lancer des tests
 			}else if(choix.contentEquals("test")) {
-				new AbstractShell("test").launch();
+				System.out.println("pas encore");
+				//new AbstractShell("test",address).launch();
 
+			//Pour lancer des applications 
 			}else if(choix.contentEquals("deploy")) {
-				boolean fin2 = false;
-				while(!fin2) {
-					System.out.println("Pour un système réparti, choisissez Client ou Server [client|server] :");
-					choix = scanner.nextLine();
-					if(choix.contentEquals("client")) {
-						new AbstractShell("deploy","client").launch();
-					}else if(choix.contentEquals("server")) {
-						new AbstractShell("deploy","server").launch();
-					}else {
-						System.out.println("Choix non reconnu");
-					}
-				}
+				System.out.println("pas encore");
+				//new AbstractShell("deploy",address).launch();
 
+			//Pour quitter l'outil
 			} else if (choix.contentEquals("quit")) {
 				fin = true;
 			}else {
