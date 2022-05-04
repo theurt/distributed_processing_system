@@ -194,14 +194,14 @@ public class CentralizedLinda implements Linda {
 		Tuple t; 
 		try {
 			t= getFromMemory(template);
-			if(t != null) memoire.remove(t);		//If tuple is null we return
+			if(t != null) {
+				memoire.remove(t);		//If tuple is null we return
+				this.invalidateCaches();
+			}
 		}
 		finally {
 			monit.unlock();
 			//System.out.printf("TRYTAKE : Thread %s  with Id %d free the lock\n",Thread.currentThread().getName(), Thread.currentThread().getId());
-		}
-		if (t != null) {
-			this.invalidateCaches();
 		}
 		return t;
     };
@@ -234,15 +234,15 @@ public class CentralizedLinda implements Linda {
 		Collection<Tuple> res;
 		try {
 			res = getAllFromMemory(template);
-			if(!res.isEmpty()) memoire.removeAll(res);
+			if(!res.isEmpty()) {
+				memoire.removeAll(res);
+				this.invalidateCaches();
+			}
 		}
 		finally {
 			monit.unlock();
 			//System.out.printf("TAKEALL : Thread %s  with Id %d free the lock\n",Thread.currentThread().getName(), Thread.currentThread().getId());
 
-		}
-		if (!res.isEmpty()) {
-			this.invalidateCaches();
 		}
 		return res;
     };
@@ -371,6 +371,7 @@ public class CentralizedLinda implements Linda {
     public ArrayList<Tuple> getCache() {
     	ArrayList<Tuple> cache = new ArrayList<Tuple>();
     	monit.lock();
+    	//Le cache ne peut pas être plus gros que la mémoire et il a aussi une taille limité
     	for (int i = 0; i < Math.min(this.cacheSize, this.memoire.size()); i++) {
     		cache.add(this.memoire.get(i));
     	}
@@ -378,6 +379,7 @@ public class CentralizedLinda implements Linda {
     	return cache;
     }
     
+    /* Prévenir tous clients que leur cache est invalide */
     private void invalidateCaches() {
     	Tuple t = new Tuple();
 		for (Callback e : this.cacheCallbacks) {

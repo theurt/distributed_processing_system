@@ -13,6 +13,7 @@ public class CacheTest1 {
 	        	linda.write(new Tuple(1, "a"));
 	        	Tuple motif = new Tuple(Integer.class, String.class);
 	        	linda.read(motif);
+	        	//le motif devrait etre en cache
 	        	linda.read(motif);
 	        	linda.take(motif);
 	        	linda.write(new Tuple(1, "a"));

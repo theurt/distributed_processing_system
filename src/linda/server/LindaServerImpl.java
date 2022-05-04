@@ -77,14 +77,22 @@ public class LindaServerImpl extends UnicastRemoteObject implements LindaServer 
 	public static void main(String[] args) {
 		try {
 			String address = args[0];
-			Pattern r = Pattern.compile(".*localhost:([0-9]+).*");
-			Matcher m = r.matcher(address);
-			if (m.matches()) {
-				int port = Integer.parseInt(m.group(1));
+			Pattern patternLocal = Pattern.compile(".*localhost:([0-9]+).*");
+			Matcher matcheLocal = patternLocal.matcher(address);
+			Pattern r = Pattern.compile("([0-9]{1,3}).([0-9]{1,3}).([0-9]{1,3}).([0-9]{1,3}):([0-9]+)");
+    		Matcher m = r.matcher(address);
+			if (matcheLocal.matches()) {
+				int port = Integer.parseInt(matcheLocal.group(1));
 				LocateRegistry.createRegistry(port);
-				Naming.bind(address, new LindaServerImpl());
+				Naming.bind("rmi://" +address + "/ServerLinda", new LindaServerImpl());
+    			System.out.println("Server started on " + address);
+			} else if (m.matches()){
+				int port = Integer.parseInt(m.group(5));
+    			LocateRegistry.createRegistry(port);
+    			Naming.bind("rmi://" + address + "/ServerLinda", new LindaServerImpl());
+    			System.out.println("Server started on " + address);
 			} else {
-				System.out.println("No valid address given");
+				System.out.println("No valid address given " + address);
 			}
 		}
 		catch (Exception ex) {
