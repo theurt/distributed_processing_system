@@ -7,7 +7,7 @@ import linda.Linda.eventMode;
 import linda.Linda.eventTiming;
 
 public class MultiserverTest2 {
-	private static Linda linda = new linda.server.LindaClient("//localhost:4000/aaa", false);
+	private static Linda linda = new linda.server.LindaClient("//localhost:4000/ServerLinda", false);
 	private static Tuple cbmotif;
 	
 	private static class MyCallback implements Callback {

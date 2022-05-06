@@ -5,7 +5,7 @@ import linda.Tuple;
 
 public class MultiserverTest1 {
 	public static void main(String[] args) {
-		final Linda linda = new linda.server.LindaClient("//localhost:4000/aaa", false);
+		final Linda linda = new linda.server.LindaClient("//localhost:4000/ServerLinda", false);
 		((linda.server.LindaClient) linda).wipe();
 		
 		new Thread() {

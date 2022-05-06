@@ -21,5 +21,5 @@ public interface ILindaMultiserver extends Remote {
     public void debug(String prefix)throws RemoteException;
 	public String getLogServer()throws RemoteException;
 	public void wipe()throws RemoteException;
-	public void setNext(LindaMultiserver next) throws RemoteException;
+	public void setNext(ILindaMultiserver next) throws RemoteException;
 }
