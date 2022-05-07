@@ -15,6 +15,17 @@ import linda.server.LindaServerImpl;
 
 public class AbstractShell {
 
+	/** Couleurs pour le terminal */
+	public static final String ANSI_RESET = "\u001B[0m";
+	public static final String ANSI_BLACK = "\u001B[30m";
+	public static final String ANSI_RED = "\u001B[31m";
+	public static final String ANSI_GREEN = "\u001B[32m";
+	public static final String ANSI_YELLOW = "\u001B[33m";
+	public static final String ANSI_BLUE = "\u001B[34m";
+	public static final String ANSI_PURPLE = "\u001B[35m";
+	public static final String ANSI_CYAN = "\u001B[36m";
+	public static final String ANSI_WHITE = "\u001B[37m";
+	
     /** URL du serveur */
     protected String nomServeur = "//localhost:8080/ServerLinda";
     
@@ -64,14 +75,14 @@ public class AbstractShell {
 					
 				//Version multiserveur
 				} else if (choix.contentEquals("multiserver")) {
-					System.out.println("Avant de vous demander pourquoi ça ne marche pas, pensez à utiliser les scripts"
-							+ "loadBalancerDeployment et éventuellement serverSlaveDeployment"
-							+ " et assurez vous d'avoir lancer l'outil avec l'adresse d'un serveur LoadBalancer");
+					System.out.println(ANSI_BLUE + "Avant de vous demander pourquoi ça ne marche pas, pensez à utiliser les scripts "
+							+ "loadBalancerDeployment et éventuellement serverSlaveDeployment pour déployer linda version Multiserver"
+							+ " et assurez vous d'avoir lancer l'outil avec l'adresse du serveur LoadBalancer" + ANSI_RESET);
 					boolean finLocal = false;
 					Scanner sc = new Scanner(System.in);
 					boolean suite = false;
 					while(!finLocal) {
-						System.out.println("Si vous êtes confiant tapez yes sinon tapez no ");
+						System.out.println("Si vous êtes confiant tapez yes sinon tapez no :");
 						String choix2 = sc.nextLine();
 						if(choix2.contentEquals("yes")) {
 							finLocal = true;
