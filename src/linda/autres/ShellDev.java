@@ -1,6 +1,7 @@
 package linda.autres;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
@@ -161,27 +162,35 @@ public class ShellDev implements ShellType {
 		String tuple = this.traiterUnTuple(line);
 		if (tuple!=null) {
 			Tuple t = Tuple.valueOf(tuple);
+			Tuple op= null;
 			switch (line[0]) {
 				case "write":
 					linda.write(t);
+					System.out.println(t.toString() + " written " );
 					break;
 				case "read":
-					linda.read(t);
+					op = linda.read(t);
+					System.out.println(op.toString() + " read " );
 					break;
 				case "take":
-					linda.take(t);					
+					op = linda.take(t);
+					System.out.println(op.toString() + " taken " );
 					break;
 				case "tryTake":
-					linda.tryTake(t);					
+					op = linda.tryTake(t);					
+					System.out.println(op.toString() + " taken " );
 					break;
 				case "tryRead":
-					linda.tryRead(t);					
+					op = linda.tryRead(t);					
+					System.out.println(op.toString() + " read " );
 					break;
 				case "takeAll":
-					linda.takeAll(t);					
+					Collection<Tuple> collOp = linda.takeAll(t);	
+					System.out.println(collOp.toString() + " taken " );
 					break;
 				case "readAll":
-					linda.readAll(t);					
+					Collection<Tuple> collOp2 = linda.readAll(t);	
+					System.out.println(collOp2.toString() + " read " );
 					break;
 			default:
 					;
@@ -347,7 +356,7 @@ public class ShellDev implements ShellType {
 	/* Détecte si une chaine en entrée est un int, bool, une string, Integer.class, String.class, Boolean.class */
 	private String typeOfToken(String token) {
 		Pattern patternInt = Pattern.compile("([0-9]*)");
-		Pattern patternStr = Pattern.compile("\"*\"");
+		Pattern patternStr = Pattern.compile("\"[^\"]+\"");;
 		Pattern patternBool = Pattern.compile("(true|false)");
 		Matcher mInt = patternInt.matcher(token);
 		Matcher mStr = patternStr.matcher(token);
