@@ -1,4 +1,4 @@
-package linda.multiserver;
+package linda.multiserveur;
 
 import java.rmi.Naming;
 import java.rmi.RemoteException;
@@ -25,18 +25,23 @@ public class LindaMultiserver extends UnicastRemoteObject implements ILindaMulti
 	
 	public static void main(String[] args) {
 		try {
+			
+			//Identify if the server is supposed to be local or distant
 			String address = args[0];
 			Pattern patternLocal = Pattern.compile(".*localhost:([0-9]+).*");
 			Matcher matcheLocal = patternLocal.matcher(address);
 			Pattern r = Pattern.compile("([0-9]{1,3}).([0-9]{1,3}).([0-9]{1,3}).([0-9]{1,3}):([0-9]+)");
     		Matcher m = r.matcher(address);
-    		int nServ = Integer.parseInt(args[1]);			//Nombre de serveur
+    		int nServ = Integer.parseInt(args[1]);			
 
+    		//Launch local server
 			if (matcheLocal.matches()) {
 				int port = Integer.parseInt(matcheLocal.group(1));
 				LocateRegistry.createRegistry(port);
 				Naming.bind("rmi://" +address + "/ServerLinda", new LindaMultiserver(nServ));
     			System.out.println("Server started on " + address);
+    			
+    		//Launch distant server
 			} else if (m.matches()){
 				int port = Integer.parseInt(m.group(5));
     			LocateRegistry.createRegistry(port);
@@ -64,6 +69,13 @@ public class LindaMultiserver extends UnicastRemoteObject implements ILindaMulti
 	public void wipe() {
 		this.linda.reset();
 	}
+	public void shutdown() {
+		this.linda.shutdown();
+	}
+	@Override
+	public void restart() throws RemoteException {
+		this.linda.restart();
+	}
 	
 	public void write(Tuple t) {
 		this.linda.write(t);
@@ -78,7 +90,6 @@ public class LindaMultiserver extends UnicastRemoteObject implements ILindaMulti
 				try {
 					return this.next.take(template, distance+1);
 				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -97,7 +108,6 @@ public class LindaMultiserver extends UnicastRemoteObject implements ILindaMulti
 				try {
 					return this.next.read(template, distance+1);
 				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -116,7 +126,6 @@ public class LindaMultiserver extends UnicastRemoteObject implements ILindaMulti
 				try {
 					return this.next.tryTake(template, distance+1);
 				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -135,7 +144,6 @@ public class LindaMultiserver extends UnicastRemoteObject implements ILindaMulti
 				try {
 					return this.next.tryRead(template, distance+1);
 				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -151,7 +159,6 @@ public class LindaMultiserver extends UnicastRemoteObject implements ILindaMulti
 			try {
 				res.addAll(this.next.takeAll(template, distance+1));
 			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		return res;
@@ -163,7 +170,6 @@ public class LindaMultiserver extends UnicastRemoteObject implements ILindaMulti
 			try {
 				res.addAll(this.next.readAll(template, distance+1));
 			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		return res;

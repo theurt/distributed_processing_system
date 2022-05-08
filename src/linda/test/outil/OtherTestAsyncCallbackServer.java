@@ -1,18 +1,22 @@
-package linda.test;
+package linda.test.outil;
 
 import linda.*;
 import linda.Linda.eventMode;
 import linda.Linda.eventTiming;
-import linda.shm.CentralizedLinda;
 /**
  * classe de tests avec Callback asynchrone pour les modes Take et Read dans les appels à eventRegister
  * @author groupe G5
  *
  */
-public class OtherTestAsyncCallback {
+public class OtherTestAsyncCallbackServer extends TestUnit {
 
-	private static Linda linda = new linda.shm.CentralizedLinda();
-    private static class MyCallback implements Callback {
+
+    public OtherTestAsyncCallbackServer(Linda lin) {
+		super(lin);
+		// TODO Auto-generated constructor stub
+	}
+
+	private static class MyCallback implements Callback {
         public void call(Tuple t) {
             try {
                 Thread.sleep(1000);
@@ -24,8 +28,13 @@ public class OtherTestAsyncCallback {
 
     private static void testTake() {
     	System.out.println("\n----------------TESTS TAKE----------------\n");
-        // Linda linda = new linda.server.LindaClient("//localhost:4000/MonServeur");
-
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
         Tuple motif = new Tuple(Integer.class, String.class);
         linda.eventRegister(eventMode.TAKE, eventTiming.IMMEDIATE, motif, new AsynchronousCallback(new MyCallback()));
 
@@ -54,7 +63,6 @@ public class OtherTestAsyncCallback {
     
     private static void testRead() {
     	System.out.println("\n----------------TESTS READ----------------\n");
-        // Linda linda = new linda.server.LindaClient("//localhost:4000/MonServeur");
 
         Tuple motif = new Tuple(Integer.class, String.class);
         linda.eventRegister(eventMode.READ, eventTiming.IMMEDIATE, motif, new AsynchronousCallback(new MyCallback()));
@@ -78,20 +86,17 @@ public class OtherTestAsyncCallback {
         linda.debug("(10)");
 
         Tuple t5 = linda.read(t1);
-        System.out.println("(11) read: " + t5);
+        System.out.println("(2) read: " + t5);
     }
-    public static void main(String[] a) {
+    
+    @Override
+	public void test(){
+    	super.test();
     	testTake();
+    	super.test();
+
     	testRead();
         
-    	 try {
- 			Thread.sleep(10000);
- 	        ((CentralizedLinda) linda).shutdown();
- 		} catch (InterruptedException e) {
- 			// TODO Auto-generated catch block
- 			e.printStackTrace();
- 		}
-    	//NB : les Got 4 foo apparaissent à la fin à cause des callback asynchrone
 
     }
 

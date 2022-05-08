@@ -86,10 +86,10 @@ if [ "${flag}" == "0" ]
 then
 	#Lancer le serveur (le service de nommage est inclus dedans)
 	echo "$test"
-	java linda.multiserver.LoadBalancer "$@"
+	java linda.multiserveur.LoadBalancer "$@"
 else
 	#Lancer le serveur (le service de nommage est inclus dedans)
 	echo "java linda.multiserver.LoadBalancer "${adresse}" "${nServ}""
-        java linda.multiserver.LoadBalancer "${adresse}" "${nServ}"
+        java linda.multiserveur.LoadBalancer "${adresse}" "${nServ}"
 
 fi	

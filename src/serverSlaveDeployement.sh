@@ -38,4 +38,4 @@ fi
 javac linda/*/*.java
 
 #Lancer le serveur (le service de nommage est inclus dedans)
-gnome-terminal --title="slaveServer "${adresse}" " -- bash -c "java linda.multiserver.LindaMultiserver "${adresse}" "${nServ}"  ; bash"
+gnome-terminal --title="slaveServer "${adresse}" " -- bash -c "java linda.multiserveur.LindaMultiserver "${adresse}" "${nServ}"  ; bash"

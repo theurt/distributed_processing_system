@@ -88,7 +88,6 @@ public class CentralizedLinda implements Linda {
     	
     	// Access critical section
     	monit.lock();
-	//System.out.printf("WRITE : Thread %s  with Id %d hold the lock\n",Thread.currentThread().getName(), Thread.currentThread().getId());
 
     	
     	try {
@@ -105,7 +104,6 @@ public class CentralizedLinda implements Linda {
 	finally {
     		//Leave critical section
        		monit.unlock();
-		//System.out.printf("WRITE : Thread %s  with Id %d free the lock\n",Thread.currentThread().getName(), Thread.currentThread().getId());
        		//signalAll à changer : créer Condition dynamiquement ? 
 	}
 	//Call necessary callbacks
@@ -145,7 +143,6 @@ public class CentralizedLinda implements Linda {
 		//Leave critical section
 		finally {
 			monit.unlock();
-			//System.out.printf("TAKE : Thread %s  with Id %d free the lock\n",Thread.currentThread().getName(), Thread.currentThread().getId());
 
 		}
     	this.invalidateCaches();
@@ -157,7 +154,6 @@ public class CentralizedLinda implements Linda {
     public Tuple read(Tuple template) {
     	
     	monit.lock();
-	//System.out.printf("READ : Thread %s  with Id %d hold the lock\n",Thread.currentThread().getName(), Thread.currentThread().getId());
 		Tuple t;
     	try {
 			Condition e1 = monit.newCondition();
@@ -175,7 +171,6 @@ public class CentralizedLinda implements Linda {
 		finally 
 		{
 		monit.unlock();
-		//System.out.printf("READ : Thread %s  with Id %d free the lock\n",Thread.currentThread().getName(), Thread.currentThread().getId());
 
 		}
 		
@@ -190,7 +185,6 @@ public class CentralizedLinda implements Linda {
      * Returns null if none found. */
     public Tuple tryTake(Tuple template) {
     	monit.lock();
-	//System.out.printf("TRYTAKE : Thread %s  with Id %d hold the lock\n",Thread.currentThread().getName(), Thread.currentThread().getId());
 		Tuple t; 
 		try {
 			t= getFromMemory(template);
@@ -201,7 +195,6 @@ public class CentralizedLinda implements Linda {
 		}
 		finally {
 			monit.unlock();
-			//System.out.printf("TRYTAKE : Thread %s  with Id %d free the lock\n",Thread.currentThread().getName(), Thread.currentThread().getId());
 		}
 		return t;
     };
@@ -210,14 +203,12 @@ public class CentralizedLinda implements Linda {
      * Returns null if none found. */
     public Tuple tryRead(Tuple template) {
     	monit.lock();
-	//System.out.printf("TRYREAD : Thread %s  with Id %d hold the lock\n",Thread.currentThread().getName(), Thread.currentThread().getId());
 		Tuple t;
 		try {
 		t = getFromMemory(template);	//If tuple is null we return
 		}
 		finally {
 			monit.unlock();
-			//System.out.printf("TRYREAD : Thread %s  with Id %d free the lock\n",Thread.currentThread().getName(), Thread.currentThread().getId());
 
 		}
 		return t != null ? t.deepclone() : null;
@@ -230,7 +221,6 @@ public class CentralizedLinda implements Linda {
      */
     public Collection<Tuple> takeAll(Tuple template) {
     	monit.lock();
-	//System.out.printf("TAKEALL : Thread %s  with Id %d hold the lock\n",Thread.currentThread().getName(), Thread.currentThread().getId());
 		Collection<Tuple> res;
 		try {
 			res = getAllFromMemory(template);
@@ -241,7 +231,6 @@ public class CentralizedLinda implements Linda {
 		}
 		finally {
 			monit.unlock();
-			//System.out.printf("TAKEALL : Thread %s  with Id %d free the lock\n",Thread.currentThread().getName(), Thread.currentThread().getId());
 
 		}
 		return res;
@@ -254,7 +243,6 @@ public class CentralizedLinda implements Linda {
      */
     public Collection<Tuple> readAll(Tuple template) {
     	monit.lock();
-	//System.out.printf("READALL : Thread %s  with Id %d hold the lock\n",Thread.currentThread().getName(), Thread.currentThread().getId());
     	Collection<Tuple> res;
     	try {
 			Collection<Tuple> tmp = getAllFromMemory(template);
@@ -266,7 +254,6 @@ public class CentralizedLinda implements Linda {
     	finally 
     	{
     		monit.unlock();
-		//System.out.printf("READALL : Thread %s  with Id %d free the lock\n",Thread.currentThread().getName(), Thread.currentThread().getId());
 
     	}
 		return res;
@@ -292,19 +279,15 @@ public class CentralizedLinda implements Linda {
 		} else {
 			
 			if(timing == eventTiming.IMMEDIATE) {
-				//System.out.println("DEBUT LOCK");
 				if (monit.isLocked()) {
-					//System.out.printf("lock held by another thread, Thread %d can't take the lock\n", Thread.currentThread().getId());
 				}
 				Tuple t = null;
 				monit.lock();
-				//System.out.printf("EVENT : Thread %s  with Id %d hold the lock\n",Thread.currentThread().getName(), Thread.currentThread().getId());
 				try {
 					t= getFromMemory(template);
 				}
 				finally {
 					monit.unlock();		
-					//System.out.printf("EVENT : Thread %s  with Id %d free the lock\n",Thread.currentThread().getName(), Thread.currentThread().getId());
 	
 				}
 				if(t != null) {
@@ -328,7 +311,6 @@ public class CentralizedLinda implements Linda {
     /** To debug, prints any information it wants (e.g. the tuples in tuplespace or the registered callbacks), prefixed by <code>prefix</code. */
     public void debug(String prefix) {
     	monit.lock();
-    	//System.out.printf("DEBUG : Thread %s  with Id %d hold the lock\n",Thread.currentThread().getName(), Thread.currentThread().getId());
 
     	try {
 	    	System.out.println(prefix + "Memory content:");
@@ -352,9 +334,13 @@ public class CentralizedLinda implements Linda {
     	}
     	finally {
 	    	monit.unlock();
-		//System.out.printf("DEBUG : Thread %s  with Id %d free the lock\n",Thread.currentThread().getName(), Thread.currentThread().getId());
 
     	}
+    }
+    
+    /** To recreate thread Service Executor */
+    public void restart() {
+    	pool = Executors.newFixedThreadPool(nb_cores);;
     }
     
     /** To close thread Service Executor */
@@ -400,20 +386,17 @@ public class CentralizedLinda implements Linda {
 			break;
 		case TAKE:
 			monit.lock();
-			//System.out.printf("CALL : Thread %s  with Id %d hold the lock\n",Thread.currentThread().getName(), Thread.currentThread().getId());
 			try {
 				memoire.remove(tuple);
 			}
 			finally {
 				monit.unlock();
-				//System.out.printf("CALL : Thread %s  with Id %d free the lock\n",Thread.currentThread().getName(), Thread.currentThread().getId());
 			}
 			break;
 		default:
 			break;
 		}
-		//System.out.println("Appel callback");
-		callback.call(tuple.deepclone()); //Pourquoi on le clone ???
+		callback.call(tuple.deepclone());
 		
 	}
     
@@ -542,7 +525,6 @@ public class CentralizedLinda implements Linda {
 				call(e.callback,e.mode,t);
 				monit.unlock();
 				//Suppress event from LIFO
-				//events.remove(e);
 			}
 		}
 	}

@@ -3,6 +3,7 @@ package linda.test;
 import linda.*;
 import linda.Linda.eventMode;
 import linda.Linda.eventTiming;
+import linda.shm.CentralizedLinda;
 /**
  * classe de tests avec Callback permanent pour les timing Immediate et Future dans les appels à eventRegister 
  * @author groupe G5
@@ -90,7 +91,14 @@ System.out.println("\n----------------TESTS FUTURE----------------\n");
     public static void main(String[] a) {
         testImmediate();
         testFuture();
-
+        try {
+			Thread.sleep(10000);
+	        ((CentralizedLinda) linda).shutdown();
+			System.exit(0);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
 }

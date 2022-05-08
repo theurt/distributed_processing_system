@@ -22,5 +22,7 @@ public interface ILindaClient {
 	public void eventRegister(eventMode mode, eventTiming timing, Tuple template, Callback callback);
 	public void debug(String prefix);
 	public void wipe() throws RemoteException;
+	public void shutdown() throws RemoteException;
+	public void restart() throws RemoteException;
 	public void refreshCache();
 }

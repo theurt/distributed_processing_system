@@ -17,7 +17,7 @@ public class BasicTestAsyncCallbackServer {
     }
 
     public static void main(String[] a) {
-        Linda linda = new linda.server.LindaClient("//localhost:4000/aaa");
+        Linda linda = new linda.server.LindaClient("//localhost:4000/ServerLinda");
 		((linda.server.LindaClient) linda).wipe();
 		try {
 			Thread.sleep(100);

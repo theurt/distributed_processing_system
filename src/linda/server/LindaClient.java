@@ -165,6 +165,16 @@ public class LindaClient implements ILindaClient, Linda {
 	}
 	
 	@Override
+	public void restart() throws RemoteException {
+		this.server.restart();
+	}
+	
+	@Override
+	public void shutdown() throws RemoteException {
+		this.server.shutdown();
+	}
+	
+	@Override
 	public void refreshCache() {
 		try {
 			this.cache = this.server.getCache();

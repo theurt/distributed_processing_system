@@ -1,17 +1,27 @@
-package linda.test;
+package linda.test.outil;
 
 import linda.*;
-import linda.shm.CentralizedLinda;
 
 /*Test plus poussé avec plusieurs threads exécutant la même requête*/
-public class BasicTest2 {
+public class BasicTest2Server extends TestUnit {
 
-    public static void main(String[] a) {
-        final Linda linda = new linda.shm.CentralizedLinda();
-        //final Linda linda = new linda.server.LindaClient("//localhost:4000/aaa");
-              
-        //Lecture de 3 tuples identiques dans linda
-        for (int i = 5; i <= 7; i++) {
+    public BasicTest2Server(Linda lin) {
+		super(lin);
+	}
+
+    @Override
+	public void test(){
+
+    	super.test();
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+        //Depot de 3 tuples identiques dans linda
+        for (int i = 1; i <= 3; i++) {
             final int j = i;
             new Thread() {  
                 public void run() {
@@ -41,27 +51,19 @@ public class BasicTest2 {
                 linda.write(t1);
 
                 Tuple t2 = new Tuple("hello", 15);
-                System.out.println("(1) write: " + t2);
+                System.out.println("(0) write: " + t2);
                 linda.write(t2);
 
-                linda.debug("(1)");
+                linda.debug("(0)");
 
                 Tuple t3 = new Tuple(4, "foo");
-                System.out.println("(2) write: " + t3);
+                System.out.println("(0) write: " + t3);
                 linda.write(t3);
                                 
-                linda.debug("(2)");
+                linda.debug("(0)");
 
             }
         }.start();
-               
-        try {
-			Thread.sleep(10000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        ((CentralizedLinda) linda).shutdown();
-
+                
     }
 }

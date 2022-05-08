@@ -54,7 +54,8 @@ else
 fi
 #Compiler les fichiers
 javac linda/*/*.java
+javac linda/*/*/*.java
 
 #Lancer le serveur (le service de nommage est inclus dedans)
-gnome-terminal --title="Client ${adresse}" -- bash -c "java linda.autres.Shell ${centralBool} ${adresse}; bash"
+gnome-terminal --title="Client ${adresse}" -- bash -c "java linda.autre.ToolSwissKnife ${centralBool} ${adresse}; bash"
 

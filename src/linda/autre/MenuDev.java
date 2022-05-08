@@ -1,12 +1,10 @@
-package linda.autres;
+package linda.autre;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import linda.Callback;
 import linda.Linda;
@@ -14,84 +12,93 @@ import linda.Tuple;
 import linda.Linda.eventMode;
 import linda.Linda.eventTiming;
 
-public class ShellDev implements ShellType {
+/** Menu which offer to select a version of Linda. */
+public class MenuDev implements MenuType {
 
-	/** Taille d'u tuple en train d'être parser */
+	/** Length of the parsed tuple */
 	static int tailleTupleCourant; 
 	
-	/** Linda à utiliser */
+	/** Linda */
 	Linda linda;
 	
-	/** Mots autorisés dans le shell */
-	private static Set<String> motAutorise = new HashSet<> ();
+	/** Authorized words in the shell */
+	private static Set<String> aWords = new HashSet<> ();
 	static {
-		motAutorise.addAll(Arrays.asList("write","take","tryTake","read","tryRead","takeAll","readAll","eventRegister","debug","help","quit","clear"));
+		aWords.addAll(Arrays.asList("write","take","tryTake","read","tryRead","takeAll","readAll","eventRegister","debug","help","quit","clear"));
 	}	
 	
-	public ShellDev(Linda linda) {
+	/** Constructor */
+	public MenuDev(Linda linda) {
 		this.linda = linda;
 	}
 	
-	/* Vérifier si un mot appartient à la liste de mot autorisés */
+	/** Check if a word is authorized
+	 * @param word word to check
+	 * @return boolean appartenance
+	 */
 	private boolean checkAppartenance(String word) {
-		return motAutorise.contains(word);
+		return aWords.contains(word);
 	}
 	
 
 	
-	/* Boucle principale du shell */
+	/** Main Loop of our shell */
+	@Override
 	public void run() {
 		
-		//Effacer la console
+		//Erase the terminal 
 		System.out.print("\033[H\033[2J");
         System.out.flush();
 		System.out.println("Bienvenu dans ce mini interpréteur de commande Linda !\nSi vous souhaitez savoir quelles commandes sont possibles tapez help :) \n");
 		
-		boolean fin = false;
-		String input;
-		System.out.print(">>>");
-		Scanner sc = new Scanner(System.in);
+		boolean end = false;					//Do we have to end this shell sessions ? 
+		String input;							//Input of the user
+		System.out.print(">>>");				//Prompt characters
 		
-		//Boucle principale du menu initial
-		while(!fin && sc.hasNextLine()) {
+		@SuppressWarnings("resource")
+		Scanner sc = new Scanner(System.in);	
+		
+		//Main loop of the menu
+		while(!end && sc.hasNextLine()) {
 			
-			//Demander la ligne
 			input = sc.nextLine();
 
-			//Ligne vide
 			if(input.isEmpty()) {
 				continue;
 			}
 			
-			//Séparer la chaine selon les espaces
+			//Separate the line according to spaces
 			String[] token = input.split("\\s+");
 			
-			//Vérifier que le premier mot fait partie de la grammaire 
+			//Check if the word written by user is legal
 			if (this.checkAppartenance(token[0])) {
 				
-				//Traiter le mot quit
-				if(token[0].contentEquals("quit") && (token.length != 1)) {
+				//Special word quit
+				if(token[0].contentEquals("quit") && (token.length == 1)) {
 						System.out.print("\033[H\033[2J");
 				        System.out.flush();
-						fin = true;
+						end = true;
 				}
 				
-				//Parser et traiter la ligne
+				//Parse the line
 				else {
-					traiterLigne(token);
+					parseLine(token);
 				}
 			}else {
 				System.out.println("Command non reconnue " + token[0] + "\n");
 			}
-			if(!fin)
+			if(!end)
 			System.out.print(">>>");
 		}
 	}
 		
-	/* Traiter une ligne en lancant les commandes basiques  du shell comme help, debug,...*/
-	private void traiterLigne(String[] line) {
+	/** Deal with a line by executing the command entered (linda command or not)
+	 * @param line line to execute
+	 */
+	private void parseLine(String[] line) {
 			
 		switch (line[0]) {
+			
 			case "quit":
 				if(line.length != 1)
 						System.out.println("Essayez juste quit");
@@ -101,6 +108,7 @@ public class ShellDev implements ShellType {
 				else
 					System.out.println("Essayez debug  TAG");
 				break;
+				
 			case "help":
 				if (line.length == 1) {
 					System.out.println("\nCommandes acceptées :\n"
@@ -117,7 +125,8 @@ public class ShellDev implements ShellType {
 				}else {
 					System.out.println("Essayez juste help");
 				} 
-					break;
+				break;
+			
 			case "clear":
 				if (line.length == 1) {
 					System.out.print("\033[H\033[2J");
@@ -126,13 +135,16 @@ public class ShellDev implements ShellType {
 					System.out.println("Essayez juste clear");
 				}
 			    break;
+			
+			//Parse and excute linda's commands
 			default:
-				parseCommande(line);
+				parseCommand(line);
 			}
 	}
 		
-	/* Parser toutes les commandes linda */
-	private void parseCommande(String[] line) {
+	/** Parse all linda's command */
+	private void parseCommand(String[] line) {
+		
 		switch (line[0]) {
 			case "write":
 			case "read":
@@ -141,9 +153,10 @@ public class ShellDev implements ShellType {
 			case "tryRead":
 			case "takeAll":
 			case "readAll":
-				//traitement commun pour ces commandes lindas simples
-				this.parseCommandeSimple(line);				
+				// Commonn treatments for simple commands
+				this.parseCommandSimple(line);				
 				break;
+			//eventRegister is special
 			case "eventRegister":
 				this.parseEventRegister(line);
 				break;
@@ -152,62 +165,78 @@ public class ShellDev implements ShellType {
 			}
 		}
 	
-	/* Parser et exécuter les commandes simples de linda (toutes sauf eventRegister)  */
-	private void parseCommandeSimple(String[] line) {
+	/** Parse and execute simple linda's command  
+	 * @param line line to treat 
+	 * */
+	private void parseCommandSimple(String[] line) {
 			
-		if(line.length <= 1) {
+		//All the commands have at least 3 parameters (command length of tuple and at least one element)
+		if(line.length <= 2) {
 			System.out.println("Il manque des arguments....\n Le format est " + line[0] + "NBELEMENT ELEMENT1 ELEMENT2 ...");
 			return;
 		}
-		String tuple = this.traiterUnTuple(line);
+		
+		//Parse the tuple
+		String tuple = this.parseATuple(line);
+		
 		if (tuple!=null) {
+			
+			//Convert the string to a real tuple
 			Tuple t = Tuple.valueOf(tuple);
 			Tuple op= null;
 			switch (line[0]) {
+			
 				case "write":
 					linda.write(t);
 					System.out.println(t.toString() + " written " );
 					break;
+				
 				case "read":
 					op = linda.read(t);
 					System.out.println(op.toString() + " read " );
 					break;
+				
 				case "take":
 					op = linda.take(t);
 					System.out.println(op.toString() + " taken " );
 					break;
+				
 				case "tryTake":
 					op = linda.tryTake(t);					
 					System.out.println(op.toString() + " taken " );
 					break;
+				
 				case "tryRead":
 					op = linda.tryRead(t);					
 					System.out.println(op.toString() + " read " );
 					break;
+				
 				case "takeAll":
 					Collection<Tuple> collOp = linda.takeAll(t);	
 					System.out.println(collOp.toString() + " taken " );
 					break;
+				
 				case "readAll":
 					Collection<Tuple> collOp2 = linda.readAll(t);	
 					System.out.println(collOp2.toString() + " read " );
 					break;
-			default:
+				default:
 					;
-		}
+				}
 		}
 	}
 		
-	/* Parser et créer un event Register*/
+	/** Parse and execute an event Register 
+	 * @param line containing the parameters */
 	private void parseEventRegister(String[] line) {
 					
-		//Vérifier que les paramètres minimaux sont présents 
+		//Check if there are enough arguments
 		if (line.length < 6) {
 			System.out.println("Il manque des paramètres : eventRegister (recharge|norecharge) (read|take) (immediate|future) LISTE_ELEMENT");
 			return;
 		}
 		
-		//Vérifier paramètre 1 : callback qui se recharge ou callback à usage unique
+		//Parse parameter 1 : type of callback
 		boolean recharge = false;
 		switch (line[1]) {
 		case "recharge":
@@ -221,7 +250,7 @@ public class ShellDev implements ShellType {
 			return;
 		}
 		
-		//Vérifier paramètre 2 : mode 
+		//Parse parameter 2 : mode 
 		eventMode mode= eventMode.READ;
 		switch (line[2]) {
 		case "read":
@@ -235,7 +264,7 @@ public class ShellDev implements ShellType {
 			return;
 		}
 		
-		//Vérifier paramètre 3 : le timing
+		//Parse parameter 3 : timing
 		eventTiming timing;
 		switch (line[3]) {
 		case "immediate":
@@ -249,7 +278,7 @@ public class ShellDev implements ShellType {
 			return;
 		}
 		
-		//Préparer les token correspondant au tuple pour être utilisée dans la méthode traiter un Tuple
+		//Prepare token corresponding to the tuple to reuse method parseATuple
 		String[] tabTuple = Arrays.copyOfRange(line, 4, line.length);
 		String[] argument = new String[line.length-3];
 		argument[0] = "eventRegister";
@@ -257,14 +286,14 @@ public class ShellDev implements ShellType {
 			argument[i] = tabTuple[i-1];
 		}
 
-		//Transformer le reste de la ligne de commande en tuple
-		String t = this.traiterUnTuple(argument);
+		//Parse the tuple in a string
+		String t = this.parseATuple(argument);
 		if (t!= null) {
 			
-			//Récupérer le tuple
+			//Convert the string a real tuple
 			Tuple tuple = Tuple.valueOf(t);
 			
-			/* Définition de deux types de callbacks */
+			/** First type of callback which register another time itself */
 			class RechargeCallback implements Callback {
 
 				public void call(Tuple t) {
@@ -278,6 +307,7 @@ public class ShellDev implements ShellType {
 		        }
 		    }
 			
+			/** Second type of callback which does'nt record another time */
 			class NoRechargeCallback implements Callback {
 
 				public void call(Tuple t) {
@@ -290,29 +320,33 @@ public class ShellDev implements ShellType {
 		        }
 		    }
 			
-			//Type de callback à utiliser
+			//Create the callback
 			Callback callback = null;
 			if(recharge)
 				callback = new RechargeCallback();
 			else
 				callback = new NoRechargeCallback();
 
-			//Enregistrer l'événèment
+			//Register the event in linda
 			this.linda.eventRegister(mode, timing, tuple, callback);
 		}
 	}
 	
 
-	/* Analyse la chaine en entrée pour renvoyer une string pouvant être castée en tuple */
-	private String traiterUnTuple(String[] token) {
-				
-		if(!this.typeOfToken(token[1]).contentEquals("int")){
+	/** Analyse the input to return a string which will be cast in a Tuple
+	 * @param token possible tuple 
+	 * @return String parsed tuple in a string */
+	private String parseATuple(String[] token) {
+		
+		//Check if first element of the token is tuple's length
+		if(! MenuSelectLinda.typeOfToken(token[1]).contentEquals("int")){
 			System.out.println("Veuillez rentrer : " + token[0] + " NBELEMENT ELT1 ELT2 ELT3...");
 			return null;
+		
 		}else {
 			int tailleTuple = Integer.parseInt(token[1]);
 
-			//Vérifier que l'utilisateur n'a pas oublié d'élément dans le tuple
+			//Check if there are enough elements in the tuple
 			if(tailleTuple != (token.length -2)){
 				System.out.println("Veuillez rentrer : " + token[0] + " NBELEMENT ELT1 ELT2 ELT3...");
 				return null;
@@ -320,62 +354,36 @@ public class ShellDev implements ShellType {
 			
 			tailleTupleCourant = tailleTuple;
 			
-			//Concaténer les arguments pour former une chaine [ ELT1 ELT2 ... ] pouvant être caster en Tuple par Tuple.Valueof	
-			String arg = "";
-			boolean erreur = false;
+			//Create the string [ ELT1 ELT2 ... ] , convertible in a Tuple
+			String arg = "";						//String calculated
+			boolean error = false;					//Problem wit the input ?
 			for(int i = 0;i<tailleTuple;i++) {
 				
-				//Analyse du type du token
-				String type = this.typeOfToken(token[i+2]);
+				//Token' type
+				String type = MenuSelectLinda.typeOfToken(token[i+2]);
 				
-				//Type Inconnu
+				//Unknown
 				if(type.contentEquals("autres")){
 					System.out.println(token[i+2] + " est de type inconnu ");
 					System.out.println("Types autorisés : int, boolean, string, Integer.class, String.class, Boolean.class");
-					erreur = true;
+					error = true;
 					break;
 				
 				//Type int/bool/String
 				}else if((!type.contentEquals("int")) && !(type.contentEquals("bool")) &&  !(type.contentEquals("str"))) {
 					arg= arg + " "+  type;
 				
-				//Type "Motif" Integer.class String.class ou Boolean.class
+				//Type Integer.class String.class ou Boolean.class
 				}else {
 					arg= arg + " "+  token[i+2];
 				}
 			}
 			
-			if(erreur)
+			if(error)
 				return null;
 			else {
 				return "[" + arg + " ]";
 				}
-		}
-	}
-
-	/* Détecte si une chaine en entrée est un int, bool, une string, Integer.class, String.class, Boolean.class */
-	private String typeOfToken(String token) {
-		Pattern patternInt = Pattern.compile("([0-9]*)");
-		Pattern patternStr = Pattern.compile("\"[^\"]+\"");;
-		Pattern patternBool = Pattern.compile("(true|false)");
-		Matcher mInt = patternInt.matcher(token);
-		Matcher mStr = patternStr.matcher(token);
-		Matcher mBool = patternBool.matcher(token);
-	
-		if(mStr.matches()) {
-			return "str";
-		}else if(mInt.matches()) {
-			return "int";
-		}else if(mBool.matches()) {
-			return "bool";
-		}else if(token.contentEquals("String.class")) {
-			return "?String";
-		}else if(token.contentEquals("Boolean.class")) {
-			return "?Boolean";
-		}else if(token.contentEquals("Integer.class")) {
-			return "?Integer";
-		}else {
-			return "autre";
 		}
 	}
 

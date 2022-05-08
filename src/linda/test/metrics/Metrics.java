@@ -1,70 +1,38 @@
-package linda.metrics;
+package linda.test.metrics;
 
+import java.rmi.RemoteException;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
 import linda.Linda;
 import linda.Tuple;
+import linda.server.LindaClient;
+import linda.shm.CentralizedLinda;
 
 public class Metrics {
 	
-	public static void main(String[] args) {
-		boolean caching = true;
-		int nThreads = 10;
-		int nRequests = 10000;
-		double takeF = .05;
-		double readAllF = 0;
+	
+	public static void test(boolean caching, int nThreads, int nRequests, double takeF, double readAllF, Linda linda) {
+	
 		Tuple[] tuples = new Tuple[] {new Tuple(1), new Tuple("a"), new Tuple(true), new Tuple(1,"a"), new Tuple("a",1), new Tuple(1,true), new Tuple(true,1), new Tuple("a",true), new Tuple(true,"a"), new Tuple(1,"a", true), new Tuple(1,true,"a"), new Tuple("a",1,true), new Tuple("a",true,1), new Tuple(true,1,"a"), new Tuple(true,"a",1)};
 		
-		if (args.length > 0) {
+		//Nettoyer linda
+		if(linda instanceof LindaClient) {
+			((linda.server.LindaClient) linda).wipe();
 			try {
-				nThreads = Integer.parseInt(args[0]);
-			} catch (Exception e) {
-				System.out.println("Usage: java linda.metrics.CacheMetrics1 [threads] [requests per thread] [use caching] [take frequency] [readAll frequency]");
-			}
-			
-			if (args.length > 1) {
-				try {
-					nRequests = Integer.parseInt(args[1]);
-				} catch (Exception e) {
-					System.out.println("Usage: java linda.metrics.CacheMetrics1 [threads] [requests per thread] [use caching] [take frequency] [readAll frequency]");
-				}
-				
-				if (args.length > 2) {
-					switch (args[2]) {
-					case "false":
-						caching = false;
-						break;
-					case "true":
-						break;
-					default:
-						System.out.println("Usage: java linda.metrics.CacheMetrics1 [threads] [requests per thread] [use caching] [take frequency] [readAll frequency]");
-					}
-					
-					if (args.length > 3) {
-						try {
-							takeF = Double.parseDouble(args[3]);
-							if (takeF >= .5)
-								System.out.println("Warning: high take frequencies can hinder result reliability");
-						} catch (Exception e) {
-							System.out.println("Usage: java linda.metrics.CacheMetrics1 [threads] [requests per thread] [use caching] [take frequency] [readAll frequency]");
-						}
-						
-						if (args.length > 4) {
-							try {
-								readAllF = Double.parseDouble(args[4]);
-								if (readAllF + 2 * takeF >= 1)
-									System.out.println("Warning: refrain from using both high take and readAll frequencies for better results");
-							} catch (Exception e) {
-								System.out.println("Usage: java linda.metrics.CacheMetrics1 [threads] [requests per thread] [use caching] [take frequency] [readAll frequency]");
-							}
-						}
-					}
-				}
+				((linda.server.LindaClient) linda).shutdown();
+				((linda.server.LindaClient) linda).restart();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
-		final Linda linda = new linda.server.LindaClient("//localhost:4000/aaa", caching);
-		((linda.server.LindaClient) linda).wipe();
+		else if(linda instanceof CentralizedLinda) {
+			((CentralizedLinda) linda).shutdown();
+			((CentralizedLinda) linda).restart();
+		}
+		
+		
 		long time[] = new long[nThreads];
 		CountDownLatch latch = new CountDownLatch(nThreads);
 		

@@ -1,6 +1,7 @@
 package linda.test;
 
 import linda.*;
+import linda.shm.CentralizedLinda;
 
 public class BasicTest1 {
 
@@ -21,6 +22,7 @@ public class BasicTest1 {
                 Tuple res = linda.take(motif);	//La requête doit attendre
                 System.out.println("(4) Resultat:" + res);
                 linda.debug("(4)");
+                return;
             }
         }.start();
                 
@@ -49,9 +51,14 @@ public class BasicTest1 {
                 linda.write(t3);
                                 
                 linda.debug("(4)");
-
+                return;
             }
         }.start();
-                
-    }
+        try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        ((CentralizedLinda) linda).shutdown();    }
 }

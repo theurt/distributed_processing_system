@@ -1,4 +1,4 @@
-package linda.test;
+package linda.test.outil;
 
 import linda.*;
 import linda.Linda.eventMode;
@@ -7,10 +7,14 @@ import linda.Linda.eventTiming;
  * classe de tests avec Callback permanent pour les timing Immediate et Future dans les appels à eventRegister 
  * @author groupe G5
  */
-public class OtherBasicTestCallbackServer {
+public class OtherBasicTestCallbackServer extends TestUnit {
 
-    private static Linda linda = new linda.server.LindaClient("//localhost:4000/ServerLinda");
-    private static Tuple cbmotif;
+    public OtherBasicTestCallbackServer(Linda lin) {
+		super(lin);
+		// TODO Auto-generated constructor stub
+	}
+
+	private static Tuple cbmotif;
     
     private static class MyCallback implements Callback {
         public void call(Tuple t) {
@@ -25,7 +29,6 @@ public class OtherBasicTestCallbackServer {
     }
 
     public static void testImmediate() {
-    	((linda.server.LindaClient) linda).wipe();
     	System.out.println("\n----------------TESTS IMMEDIATE----------------\n");
 		
         linda = new linda.server.LindaClient("//localhost:4000/aaa");
@@ -61,7 +64,6 @@ public class OtherBasicTestCallbackServer {
     }
     	
     public static void testFuture() {
-    	((linda.server.LindaClient) linda).wipe();
     	System.out.println("\n----------------TESTS FUTURE----------------\n");
 
         Tuple t3 = new Tuple(4, "foo");
@@ -91,8 +93,11 @@ public class OtherBasicTestCallbackServer {
 
     }
     
-    public static void main(String[] a) {
-        testImmediate();
+    @Override
+	public void test(){
+    	super.test();
+    	testImmediate();
+    	super.test();
         testFuture();
 
     }

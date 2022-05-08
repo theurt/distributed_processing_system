@@ -7,7 +7,7 @@ public class BasicTest2Server {
 
     public static void main(String[] a) {
 
-        final Linda linda = new linda.server.LindaClient("//localhost:4000/aaa");      
+        final Linda linda = new linda.server.LindaClient("//localhost:4000/ServerLinda");      
 		((linda.server.LindaClient) linda).wipe();
 		try {
 			Thread.sleep(100);

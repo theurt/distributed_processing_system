@@ -1,15 +1,26 @@
-package linda.test;
+package linda.test.outil;
 
 import java.util.Collection;
 
 import linda.*;
-import linda.shm.CentralizedLinda;
 
-public class TestsAvances {
+public class TestsAvancesServer extends TestUnit{
 	
-	public static void main(String[] a) {
-        final Linda linda = new linda.shm.CentralizedLinda();
-                
+	public TestsAvancesServer(Linda lin) {
+		super(lin);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public void test(){
+    	super.test();
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
         new Thread() {  
             public void run() {
                 try {
@@ -49,8 +60,7 @@ public class TestsAvances {
                 linda.debug("(9)");
             }
         }.start();
-             
-        //Ce thread doit démarrer en premier 
+                
         new Thread() {
             public void run() {
                 try {
@@ -85,12 +95,6 @@ public class TestsAvances {
 
             }
         }.start();
-        try {
- 			Thread.sleep(10000);
- 	        ((CentralizedLinda) linda).shutdown();
- 		} catch (InterruptedException e) {
- 			// TODO Auto-generated catch block
- 			e.printStackTrace();
- 		}
+                
     }
 }

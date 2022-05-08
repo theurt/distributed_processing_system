@@ -21,5 +21,7 @@ public interface LindaServer extends Remote {
     public void debug(String prefix)throws RemoteException;
 	public String getLogServer()throws RemoteException;
 	public void wipe()throws RemoteException;
+	public void shutdown()throws RemoteException;
+	public void restart() throws RemoteException;
 	public ArrayList<Tuple> getCache() throws RemoteException;
 }

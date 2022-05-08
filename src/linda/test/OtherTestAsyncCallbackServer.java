@@ -10,7 +10,7 @@ import linda.Linda.eventTiming;
  */
 public class OtherTestAsyncCallbackServer {
 
-    private static Linda linda = new linda.server.LindaClient("//localhost:4000/aaa");
+    private static Linda linda = new linda.server.LindaClient("//localhost:4000/ServerLinda");
 
     private static class MyCallback implements Callback {
         public void call(Tuple t) {

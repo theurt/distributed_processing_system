@@ -1,12 +1,17 @@
-package linda.test;
+package linda.test.outil;
 
 import linda.*;
 import linda.Linda.eventMode;
 import linda.Linda.eventTiming;
 
-public class BasicTestAsyncCallback {
+public class BasicTestAsyncCallbackServer extends TestUnit {
 
-    private static class MyCallback implements Callback {
+    public BasicTestAsyncCallbackServer(Linda lin) {
+		super(lin);
+		// TODO Auto-generated constructor stub
+	}
+
+	private static class MyCallback implements Callback {
         public void call(Tuple t) {
             try {
                 Thread.sleep(1000);
@@ -16,10 +21,16 @@ public class BasicTestAsyncCallback {
         }
     }
 
-    public static void main(String[] a) {
-        Linda linda = new linda.shm.CentralizedLinda();
-        // Linda linda = new linda.server.LindaClient("//localhost:4000/MonServeur");
-
+	@Override
+	public void test(){
+    	super.test();
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
         Tuple motif = new Tuple(Integer.class, String.class);
         linda.eventRegister(eventMode.TAKE, eventTiming.IMMEDIATE, motif, new AsynchronousCallback(new MyCallback()));
 
@@ -38,6 +49,6 @@ public class BasicTestAsyncCallback {
 
         linda.debug("(4)");
 
-
     }
+
 }

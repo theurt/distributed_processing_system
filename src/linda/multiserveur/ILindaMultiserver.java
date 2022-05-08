@@ -1,4 +1,4 @@
-package linda.multiserver;
+package linda.multiserveur;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -21,5 +21,7 @@ public interface ILindaMultiserver extends Remote {
     public void debug(String prefix)throws RemoteException;
 	public String getLogServer()throws RemoteException;
 	public void wipe()throws RemoteException;
+	public void shutdown() throws RemoteException;
+	public void restart() throws RemoteException;
 	public void setNext(ILindaMultiserver next) throws RemoteException;
 }

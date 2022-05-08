@@ -7,7 +7,7 @@ import linda.Linda.eventTiming;
 /*Test avec un callback que l'on réenregistre */
 public class BasicTestCallbackServer {
 
-    private static Linda linda;
+    private static  Linda linda = new linda.server.LindaClient("//localhost:4000/ServerLinda");
     private static Tuple cbmotif;
     
     private static class MyCallback implements Callback {
@@ -25,7 +25,6 @@ public class BasicTestCallbackServer {
     }
 
     public static void main(String[] a) {
-        linda = new linda.server.LindaClient("//localhost:4000/aaa");
 		((linda.server.LindaClient) linda).wipe();
 		try {
 			Thread.sleep(100);

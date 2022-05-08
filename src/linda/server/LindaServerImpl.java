@@ -31,6 +31,15 @@ public class LindaServerImpl extends UnicastRemoteObject implements LindaServer 
 		this.linda.reset();
 	}
 	
+	@Override
+	public void shutdown() throws RemoteException {
+		this.linda.shutdown();
+	}
+	
+	@Override
+	public void restart() throws RemoteException {
+		this.linda.restart();
+	}
 	
 	public void write(Tuple t) {
 		this.linda.write(t);
@@ -116,4 +125,6 @@ public class LindaServerImpl extends UnicastRemoteObject implements LindaServer 
 			}
 		}
 	}
+
+
 }
