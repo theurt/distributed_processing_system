@@ -1,20 +1,48 @@
-Pour déployer linda sur un serveur unique :
-./serverDeployment [IP:PORT] (argument optionnel, si absent localhsot:8080 est utilisé)
-ex ./serverDeployment 127.0.0.1:4000
+# INSTRUCTIONS POUR DEPLOYER LINDA 
 
-Pour déployer le multiserveur :
-  -Cas 1 : on teste sur la même machine, dans ce cas on peut simplement lancer ./loadBalancerDeployment [IP:PORT] [NBSERVEURS]
-  Si le premier parametre est précise le deuxième est obligatoire, sinon par dfaut on lance un loadBalancer sur localhost:4000
-  et 10 serveurs esclaves sur localhost:8080 jusqu'à 90
-  - CAs 2 : on utilise de vrais serveurs 
-   Dans cette situation, il faut déployer linda sur tous les serveurs esclaves avec le script ./serverSlaveDeployment [IP:PORT] [N]
-   Il faut préciser l'ip et le port du serveur et le nombre de serveurs esclaves total
-   Enseiit il faut utiliser ./loadBalancerDeployment [IP:PORT] [NBSERVEURS] [IP:PORT] [IP:PORT] ...
-   avec à partir du troisième argument la liste des adresses des serveurs esclaves 
+
+## Pour déployer linda sur un serveur unique 
+
+La commande a utiliser est la suivante : 
+
+```console 
+./serverSingleDeployment [IP:PORT]  
+```
+
+IP doit etre sous le format "XXX.XXX.XXX.XXX" ou sous le format "localhost" et port un nombre entre 0 et 10000.  
+Notez qu'il s'agit d'un argument optionnel et que s'il est absent on lance un localhost:8080
+
+**En cas de déploiement sur un serveur distant** le paramètre rentré devrait etre l'adresse du serveur sur lequel vous déployer, nous 
+ne sommes pas responsables en cas de non respect de cette consigne.
+
+## Pour déployer linda sur le multiserveur
+  
+  * Deploiement local :  
+  ```console 
+  ./loadBalancerDeployment [IP:PORT] [NBSERVEURS]
+  ```
+  Si le premier paramètre est précisé le deuxième est obligatoire
+  Si aucun paramètre n'est rentré, par défaut on lance un loadBalancer sur localhost:4040 et 10 serveurs "esclaves" de localhost:8080 jusqu'à 
+  localhost:8090
+  
+  * Deploiement sur une machine distante :  
+   Dans cette situation, il faut déployer linda sur tous les serveurs esclaves au préalable avec le script ./serverSlaveDeployment [IP:PORT] [N]
+   Il faut préciser l'ip et le port du serveur esclave **et le nombre de serveurs esclaves total.**  
+   **Seulement ensuite** il faut utiliser ```console ./loadBalancerDeployment [IP:PORT] [NBSERVEURS] [IP:PORT] [IP:PORT] ... ``` (liste des serveurs esclaves)
    
-Pour déployer un client :
-./clientDeployment [central|reparti] [IP:PORT]
-Si deploiement linda central pas besoin de deuxième argument
-Si reparti est rentré comme premier argument il faut nécessairement l'IP:PORT
-du serveur en deuxième arguement
-Si pas d'argument on choisit un mode réparti sur localhost:8080
+   * Deploiement à l'aide d'un fichier de configuration :  
+   Respecter le format suivant (tout sur une même ligne) : [IP:PORT] [NBSERVEURS] [IP:PORT] [IP:PORT] ... (liste des serveurs esclaves)
+   Puis rentrer ```console cat exemple.conf | ./loadBalancerDeployement.sh `xargs` ``` avec exemple.conf votre fichier
+   
+   **ATTENTION, il vous faut au préalable avoir utilisé le script serverSlaveDeployment comme mentionné au préalable**
+   
+   
+## Pour déployer un client/utiliser notre fantastique outil multitâche
+
+```console ./clientDeployment [central|reparti] [IP:PORT] ```
+
+Le premier argument permet de demander un lancement de l'outil sur une instance locale/central de Linda.
+Si reparti est rentré comme premier argument il faut nécessairement préciser le deuxième paramètre.
+Si pas aucun argument on lance l'outil pour vous avec une version répartie sur un serveur localhost:8080
+
+**MERCI D'AVOIR LU CE MINI-GUIDE.**
