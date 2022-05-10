@@ -134,9 +134,10 @@ public class ToolSwissKnife {
 			}
 
 			//Can we contact it ?
-			if(! isServerAccessible(address))
+			if(! isServerAccessible(address)) {
 				scanner.close();
 				return;
+			}
 		}
 
 		//Main Loop of Main Menu
