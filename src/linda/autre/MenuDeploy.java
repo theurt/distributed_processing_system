@@ -43,7 +43,7 @@ public class MenuDeploy implements MenuType {
 		String fileSeparator = FileSystems.getDefault().getSeparator();
 				
 		//Retrieve path of the application
-		String pathTest = s.toString() + fileSeparator + "linda" + fileSeparator + "autres" + fileSeparator + "application" + fileSeparator;
+		String pathTest = s.toString() + fileSeparator + "linda" + fileSeparator + "autre" + fileSeparator + "application" + fileSeparator;
 		File dir = new File(pathTest);
 			
 		//Save name of applications in autres.application directory
@@ -94,7 +94,7 @@ public class MenuDeploy implements MenuType {
 						//Instantiate the application
 						Class<?> c = null;
 						try {
-							c = Class.forName("linda.autres.application." +token[0].substring(0, token[0].length()-5));
+							c = Class.forName("linda.autre.application." +token[0].substring(0, token[0].length()-5));
 						} catch (ClassNotFoundException e) {
 							e.printStackTrace();
 						}

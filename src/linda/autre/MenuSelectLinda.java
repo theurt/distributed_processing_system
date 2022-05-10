@@ -35,6 +35,8 @@ public class MenuSelectLinda {
     public MenuType createShell(String type,Linda linda,boolean cache) {
     	
     	if(type.contentEquals("dev")) {
+    		if(linda==null)
+    			System.err.println("souci");
     		return (MenuType) new MenuDev(linda);
     	}else if(type.contentEquals("test")){
     		return (MenuType) new MenuTest(linda,cache);

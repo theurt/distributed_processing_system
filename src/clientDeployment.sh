@@ -56,6 +56,8 @@ fi
 javac linda/*/*.java
 javac linda/*/*/*.java
 
+echo "java linda.autre.ToolSwissKnife ${centralBool} ${adresse}; bash"
+
 #Lancer le serveur (le service de nommage est inclus dedans)
 gnome-terminal --title="Client ${adresse}" -- bash -c "java linda.autre.ToolSwissKnife ${centralBool} ${adresse}; bash"
 

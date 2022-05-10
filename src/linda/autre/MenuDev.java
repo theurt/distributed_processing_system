@@ -57,7 +57,9 @@ public class MenuDev implements MenuType {
 		
 		@SuppressWarnings("resource")
 		Scanner sc = new Scanner(System.in);	
-		
+		if (linda == null)
+		System.err.println("souci");
+
 		//Main loop of the menu
 		while(!end && sc.hasNextLine()) {
 			

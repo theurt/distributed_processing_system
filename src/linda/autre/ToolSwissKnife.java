@@ -114,7 +114,6 @@ public class ToolSwissKnife {
 		boolean centralizedVersion = Boolean.parseBoolean(args[0]);			//Do we have to use the tool for a centralized linda ?
 		String address = null;												//Adress of a server containing linda implementation
 		
-		
 		// "Normal" case => Linda is distributed on server(s) if centralized we don't care about the adress...
 		if(!centralizedVersion) {
 			
@@ -134,14 +133,18 @@ public class ToolSwissKnife {
 			}
 
 			//Can we contact it ?
-			if(! isServerAccessible(address))
+			if(! isServerAccessible(address)) {
 				scanner.close();
 				return;
+			}
+			address = "rmi://" + address + "/ServerLinda";
+
 		}
 
 		//Main Loop of Main Menu
 		boolean end = false;	
 		while(!end) {
+
 			
 			//Guideline for the user
 			System.out.println("Choisissez un mode d'utilisation de l'outil [dev|test|deploy|quit] :");
