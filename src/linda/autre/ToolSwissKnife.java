@@ -6,6 +6,7 @@ import java.rmi.RemoteException;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import linda.autre.MenuSelectLinda;
 
 /** Tool used for developpment, tests and deployment of applications on Linda Platform. */
 public class ToolSwissKnife {
@@ -137,9 +138,9 @@ public class ToolSwissKnife {
 				scanner.close();
 				return;
 			}
-			address = "rmi://" + address + "/ServerLinda";
-
 		}
+		address = "rmi://" + address + "/ServerLinda";
+
 
 		//Main Loop of Main Menu
 		boolean end = false;	
