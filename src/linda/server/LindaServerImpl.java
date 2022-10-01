@@ -19,18 +19,27 @@ import java.util.regex.Pattern;
 public class LindaServerImpl extends UnicastRemoteObject implements LindaServer {
 	private static final long serialVersionUID = 1L;
 	private CentralizedLinda linda = new CentralizedLinda();
-	//private String log;
+	private String log;
 	
 	public LindaServerImpl() throws RemoteException {}
 	
-	//public String getLogServer() {
-	//	return this.log;
-	//}
+	public String getLogServer() {
+		return this.log;
+	}
 	
 	public void wipe() {
 		this.linda.reset();
 	}
 	
+	@Override
+	public void shutdown() throws RemoteException {
+		this.linda.shutdown();
+	}
+	
+	@Override
+	public void restart() throws RemoteException {
+		this.linda.restart();
+	}
 	
 	public void write(Tuple t) {
 		this.linda.write(t);
@@ -67,7 +76,7 @@ public class LindaServerImpl extends UnicastRemoteObject implements LindaServer 
 	public void debug(String prefix) {
 		
 		this.linda.debug(prefix);
-		//this.log = this.linda.getLog();
+		this.log = this.linda.getLog();
 	}
 	
 	public ArrayList<Tuple> getCache() {
@@ -77,14 +86,22 @@ public class LindaServerImpl extends UnicastRemoteObject implements LindaServer 
 	public static void main(String[] args) {
 		try {
 			String address = args[0];
-			Pattern r = Pattern.compile(".*localhost:([0-9]+).*");
-			Matcher m = r.matcher(address);
-			if (m.matches()) {;
-				int port = Integer.parseInt(m.group(1));
+			Pattern patternLocal = Pattern.compile(".*localhost:([0-9]+).*");
+			Matcher matcheLocal = patternLocal.matcher(address);
+			Pattern r = Pattern.compile("([0-9]{1,3}).([0-9]{1,3}).([0-9]{1,3}).([0-9]{1,3}):([0-9]+)");
+    		Matcher m = r.matcher(address);
+			if (matcheLocal.matches()) {
+				int port = Integer.parseInt(matcheLocal.group(1));
 				LocateRegistry.createRegistry(port);
-				Naming.bind(address, new LindaServerImpl());
+				Naming.bind("rmi://" +address + "/ServerLinda", new LindaServerImpl());
+    			System.out.println("Server started on " + address);
+			} else if (m.matches()){
+				int port = Integer.parseInt(m.group(5));
+    			LocateRegistry.createRegistry(port);
+    			Naming.bind("rmi://" + address + "/ServerLinda", new LindaServerImpl());
+    			System.out.println("Server started on " + address);
 			} else {
-				System.out.println("No valid address given");
+				System.out.println("No valid address given " + address);
 			}
 		}
 		catch (Exception ex) {
@@ -108,4 +125,6 @@ public class LindaServerImpl extends UnicastRemoteObject implements LindaServer 
 			}
 		}
 	}
+
+
 }

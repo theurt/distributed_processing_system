@@ -1,15 +1,15 @@
-package linda.server;
+package linda.multiserveur;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.Collection;
 
-import linda.*;
+import linda.Tuple;
 import linda.Linda.eventMode;
 import linda.Linda.eventTiming;
+import linda.server.IRemoteCallback;
 
-public interface LindaServer extends Remote {
+public interface ILoadBalancer extends Remote {
 	public void write(Tuple t) throws RemoteException;
 	public Tuple take(Tuple template) throws RemoteException;
 	public Tuple read(Tuple template) throws RemoteException;
@@ -18,10 +18,6 @@ public interface LindaServer extends Remote {
 	public Collection<Tuple> takeAll(Tuple template) throws RemoteException;
 	public Collection<Tuple> readAll(Tuple template) throws RemoteException;
 	public void eventRegister(eventMode mode, eventTiming timing, Tuple template, IRemoteCallback callback) throws RemoteException;
-    public void debug(String prefix)throws RemoteException;
-	public String getLogServer()throws RemoteException;
-	public void wipe()throws RemoteException;
-	public void shutdown()throws RemoteException;
-	public void restart() throws RemoteException;
-	public ArrayList<Tuple> getCache() throws RemoteException;
+    public void debug(String prefix) throws RemoteException;
+	public void wipe() throws RemoteException;
 }

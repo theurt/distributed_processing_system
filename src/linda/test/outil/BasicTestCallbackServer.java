@@ -1,20 +1,24 @@
-package linda.test;
+package linda.test.outil;
 
 import linda.*;
 import linda.Linda.eventMode;
 import linda.Linda.eventTiming;
-import linda.shm.CentralizedLinda;
 
 /*Test avec un callback que l'on réenregistre */
-public class BasicTestCallback {
+public class BasicTestCallbackServer extends TestUnit {
 
-    private static Linda linda;
+    public BasicTestCallbackServer(Linda lin) {
+		super(lin);
+		// TODO Auto-generated constructor stub
+	}
+
     private static Tuple cbmotif;
     
     private static class MyCallback implements Callback {
 
 		public void call(Tuple t) {
             System.out.println("CB got "+t);
+    		//System.out.printf("EVENT REGISTER : Thread %s  with Id %d \n",Thread.currentThread().getName(), Thread.currentThread().getId());
             linda.eventRegister(eventMode.TAKE, eventTiming.IMMEDIATE, cbmotif, this);
             try {
                 Thread.sleep(1000);
@@ -24,16 +28,22 @@ public class BasicTestCallback {
         }
     }
 
-    public static void main(String[] a) {
-        linda = new linda.shm.CentralizedLinda();
-        //linda = new linda.server.LindaClient("//localhost:4000/aaa");
-
+    @Override
+	public void test(){
+    	super.test();
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
         cbmotif = new Tuple(Integer.class, String.class);
         Callback callback = new MyCallback();
         linda.eventRegister(eventMode.TAKE, eventTiming.IMMEDIATE, cbmotif, callback);
 
         Tuple t1 = new Tuple(4, 5);
-        System.out.println("(1) write: " + t1);
+        System.out.println("(2) write: " + t1);
         linda.write(t1);
 
         Tuple t2 = new Tuple("hello", 15);
@@ -42,11 +52,11 @@ public class BasicTestCallback {
         linda.debug("(2)");
 
         Tuple t3 = new Tuple(4, "foo");
-        System.out.println("(3) write: " + t3);
+        System.out.println("(2) write: " + t3);
         linda.write(t3);
         
         Tuple t4 = new Tuple(10, "foo");
-        System.out.println("(4) write: " + t4);
+        System.out.println("(2) write: " + t4);
         linda.write(t4);
         
         try {
@@ -54,15 +64,8 @@ public class BasicTestCallback {
         } catch (InterruptedException e) {
         }
 
-        linda.debug("(4)");
+        linda.debug("(2)");
 
-        try {
-			Thread.sleep(10000);
-	        ((CentralizedLinda) linda).shutdown();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
     }
 
 }

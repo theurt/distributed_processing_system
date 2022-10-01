@@ -1,15 +1,20 @@
-package linda.test;
+package linda.test.outil;
 
 import java.rmi.RemoteException;
 
 import linda.*;
 
-public class BasicTest1Server {
+public class BasicTest1Server extends TestUnit {
 
-    public static void main(String[] a) {
+
+    public BasicTest1Server(Linda lin) {
+		super(lin);
+	}
+
+    @Override
+	public void test(){
                 
-        final Linda linda = new linda.server.LindaClient("//localhost:4000/ServerLinda");
-		((linda.server.LindaClient) linda).wipe();
+    	super.test();
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException e1) {
@@ -56,7 +61,7 @@ public class BasicTest1Server {
                 System.out.println("(4) write: " + t3);
                 linda.write(t3);
                                 
-                linda.debug("(4)");
+                linda.debug("(FinTEST1)");
 
             }
         }.start();
